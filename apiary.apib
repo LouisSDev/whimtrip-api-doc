@@ -15,6 +15,9 @@ It was designed to be as flexible as possible. As an early stage version of our 
 Altough our API allows you to build completely custom business logic at each step, **the overall process
 is quite guided** and should be the same for almost any usecase.
 
+This API is in early release stage and if you have specific requirements, or features you would need, 
+feel free to let us know by contacting us.
+
 
 ## Steps
 
@@ -281,76 +284,371 @@ different authentication scheme we provide, you can refer to [this part](#Authen
         
            
 
-### Propositions [/trip/multidestination/generate]
+### Itineraries Generation [/trip/multidestination/generate]
+<a name="Generation"></a>
+The propositions endpoint are the entry point of the trip automation process. They contains two steps.
+The first one consist in submitting the trip creation form. This is the step described below. And the
+second one will be about retrieving the generated multi-destination trips itineraries. This will be covered
+just after the generation endpoint.
 
-The propositions endpoint are the entry point of the trip automation process. This contains two steps.
-The first one consist in submitting the trip creation form. The second one will be about retrieving the
-generated multi-destination trips itineraries.
-
-### Generate a Trip  [POST]
+### Generate Itineraries Matching Your Request  [POST]
 
 + Request (application/json)
     + Attributes (TripRequest)
 
-+ Response 200 (application/json)
-  
-
-### Create a New Question [PUT]
-
-
-+ Request (application/json)
-
-        {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
-        }
-
 + Response 201 (application/json)
-
-    + Headers
-
-            Location: /questions/2
-
-    + Body
-
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
+    
+    {
+        "status": "SENT",
+        "httpStatus": 200,
+        "tokenExpiration": "05/30/2018 20:20:32.9850+00:00",
+        "apiCallId": 9115,
+        "contents": {
+            "proposition": {
+                "propositionId": 542,
+                "pagesCount": 4
             }
-            
+        }
+    }
+    
+### Retrieving Itineraries [/trip/multidestination/{propositionId}{?withAccommodationPackages,page}]
 
+We've decided that itineraries should be polled by page and that each page should contain up to 5 itineraries. (it will
+contain 5 or less itinerary on the last page of results). This decision was made because of the underlying prerequisite
+on Booking API. If we use your own hotel database, we might agree on a custom page size if you need this feature.
 
-<a name="Geo"></a>            
-### Geo Structures [/geo]
++ Parameters
+
+    + withAccommodationPackages: true (boolean) - Wether you want to **activate the accommodation packages** feature here
+     or not. This will give you the prices of the different packages available. <br/>
+     
+     If you used the tag `ON_BUDGET` or `COMFORT` in your generation request, this will **limitate the types of packages** 
+     generated (no 4* and 5* with `ON_BUDGET` tag and no budget hotel with `COMFORT` tag). <br/> 
+     
+     Polling the accommodation prices can take up some time for us (up to two more seconds of processing) and is computing 
+     intensive for us. If you don't need the accommodation packages here, we **strongly recommend** you set this parameter
+     to false in order to have far quicker responses. There is another way to retrieve it later using 
+     [another endpoint](#GetItinerary).
+     
+    + page: 0 (number) - By default, it will be set to 0. Pagination starts at 0 and the max page number you can fetch 
+      is indicated in the [generation endpoint](#Generation) response `pagesCount` parameter. As the pagination start 
+      at index 0, the max page index you can fetch is equal to `pagesCount - 1`.
+     
+### Retrieve Generated Itineraries [GET]
+    
++ Response 200 (application/json)
+    
+    {
+        "status": "SENT",
+        "httpStatus": 200,
+        "tokenExpiration": "05/30/2018 20:49:47.4950+00:00",
+        "apiCallId": 9116,
+        "contents": {
+            "propositionId": 542,
+            "request": {
+                "id": 486,
+                "customTag": null,
+                "fromDate": "06/08/2018",
+                "toDate": "06/18/2018",
+                "moreJourneys": false,
+                "passengers": [
+                    {
+                        "id": 630,
+                        "age": 19
+                    }
+                ],
+                "fromPlace": {
+                    "id": 1132,
+                    "name": "Paris",
+                    "countryId": "FR",
+                    "countryName": "France",
+                    "translatedName": "Paris",
+                    "translatedCountryName": "France",
+                    "photographyHolder": {
+                        "id": 638,
+                        "photographies": [
+                            {
+                                "id": 500131,
+                                "type": "LANDSCAPE",
+                                "origin": "SELF_HOSTED",
+                                "originalWidth": 960,
+                                "originalHeight": 540,
+                                "latitude": null,
+                                "longitude": null,
+                                "attribution": {
+                                    "id": 500131,
+                                    "sourceProvider": "Pixabay",
+                                    "sourceName": "Pixabay",
+                                    "url": "https://pixabay.com/en/eiffel-tower-lovely-photo-2810259/",
+                                    "license": "CC0 1.0 Universal (CC0 1.0)",
+                                    "authorUrl": "pixabay.com/en/users/daviddeolindo22-6606720/",
+                                    "author": "daviddeolindo22 / 1 image",
+                                    "title": "Eiffel Tower Lovely Photo",
+                                    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                                },
+                                "multisized": true,
+                                "largePath": "uploads/images/large/Y03wC0nTwU.jpg",
+                                "pathRelative": true,
+                                "mediumPath": "uploads/images/medium/Y03wC0nTwU.jpg",
+                                "smallPath": "uploads/images/small/Y03wC0nTwU.jpg",
+                                "thumbnailPath": "uploads/images/thumbnail/Y03wC0nTwU.jpg"
+                            },
+                            // Some more photographies
+                        ]
+                    }
+                },
+                "toPlace": {
+                    "id": 1132,
+                    "name": "Paris",
+                    "countryId": "FR",
+                    "countryName": "France",
+                    "translatedName": "Paris",
+                    "translatedCountryName": "France",
+                    "photographyHolder": {
+                        "id": 638,
+                        "photographies": [
+                            {
+                                "id": 500131,
+                                "type": "LANDSCAPE",
+                                "origin": "SELF_HOSTED",
+                                "originalWidth": 960,
+                                "originalHeight": 540,
+                                "latitude": null,
+                                "longitude": null,
+                                "attribution": {
+                                    "id": 500131,
+                                    "sourceProvider": "Pixabay",
+                                    "sourceName": "Pixabay",
+                                    "url": "https://pixabay.com/en/eiffel-tower-lovely-photo-2810259/",
+                                    "license": "CC0 1.0 Universal (CC0 1.0)",
+                                    "authorUrl": "pixabay.com/en/users/daviddeolindo22-6606720/",
+                                    "author": "daviddeolindo22 / 1 image",
+                                    "title": "Eiffel Tower Lovely Photo",
+                                    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                                },
+                                "multisized": true,
+                                "largePath": "uploads/images/large/Y03wC0nTwU.jpg",
+                                "pathRelative": true,
+                                "mediumPath": "uploads/images/medium/Y03wC0nTwU.jpg",
+                                "smallPath": "uploads/images/small/Y03wC0nTwU.jpg",
+                                "thumbnailPath": "uploads/images/thumbnail/Y03wC0nTwU.jpg"
+                            }
+                        ]
+                    }
+                },
+                "createdAt": "05/30/2018",
+                "regenerated": false,
+                "flexibleDates": false,
+                "destinationsCount": 3,
+                "mustUseDestinations": [],
+                "region": "ASIA",
+                "requestTags": [],
+                "passengersCount": 1,
+                "tripDuration": 10,
+                "family": false
+            },
+            "pagesCount": 4,
+            "itineraries": {
+                "results": [
+                    {
+                        "id": 21,
+                        "journeys": [
+                            {
+                                "id": 6633,
+                                "toPlace": {
+                                    "id": 2381,
+                                    "name": "Phuket",
+                                    "countryId": "TH",
+                                    "countryName": "Thailand",
+                                    "translatedName": "Phuket",
+                                    "translatedCountryName": "Thaïlande",
+                                    "photographyHolder": {
+                                        "id": 1322,
+                                        "photographies": [
+                                            {
+                                                "id": 604108,
+                                                "type": "LANDSCAPE",
+                                                "origin": "SELF_HOSTED",
+                                                "originalWidth": 480,
+                                                "originalHeight": 270,
+                                                "latitude": 8.1132,
+                                                "longitude": 98.3169,
+                                                "attribution": null,
+                                                "multisized": false,
+                                                "pathRelative": true,
+                                                "path": "uploads/images/small/NEGioHzsW5.jpg"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "actualJourneyInd": 0,
+                                "duration": 3,
+                                "fromDate": "06/08/2018",
+                                "toDate": "06/11/2018"
+                            },
+                            {
+                                "id": 6634,
+                                "toPlace": {
+                                    "id": 2375,
+                                    "name": "Chiang Rai",
+                                    "countryId": "TH",
+                                    "countryName": "Thailand",
+                                    "translatedName": "Chiang Rai",
+                                    "translatedCountryName": "Thaïlande",
+                                    "photographyHolder": {
+                                        "id": 1319,
+                                        "photographies": [
+                                           {
+                                                "id": 604100,
+                                                "type": "LANDSCAPE",
+                                                "origin": "SELF_HOSTED",
+                                                "originalWidth": 480,
+                                                "originalHeight": 270,
+                                                "latitude": 19.9523,
+                                                "longitude": 99.8829,
+                                                "attribution": null,
+                                                "multisized": false,
+                                                "pathRelative": true,
+                                                "path": "uploads/images/small/CbGFkMyS5z.jpg"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "actualJourneyInd": 1,
+                                "duration": 4,
+                                "fromDate": "06/11/2018",
+                                "toDate": "06/15/2018"
+                            },
+                            {
+                                "id": 6635,
+                                "toPlace": {
+                                    "id": 2372,
+                                    "name": "Bangkok",
+                                    "countryId": "TH",
+                                    "countryName": "Thailand",
+                                    "translatedName": "Bangkok",
+                                    "translatedCountryName": "Thaïlande",
+                                    "photographyHolder": {
+                                        "id": 1316,
+                                        "photographies": [
+                                            {
+                                                "id": 500341,
+                                                "type": "LANDSCAPE",
+                                                "origin": "SELF_HOSTED",
+                                                "originalWidth": 960,
+                                                "originalHeight": 540,
+                                                "latitude": null,
+                                                "longitude": null,
+                                                "attribution": {
+                                                    "id": 500341,
+                                                    "sourceProvider": "Pixabay",
+                                                    "sourceName": "Pixabay",
+                                                    "url": "https://pixabay.com/en/https://pixabay.com/fr/grand-palace-wat-phra-kaew-bangkok-1822487/",
+                                                    "license": "CC0 1.0 Universal (CC0 1.0)",
+                                                    "authorUrl": "pixabay.com",
+                                                    "author": "",
+                                                    "title": "Https://pixabay.com/fr/grand Palace Wat Phra Kaew Bangkok",
+                                                    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                                                },
+                                                "multisized": true,
+                                                "largePath": "uploads/images/large/mX3ufxb5yU.jpg",
+                                                "pathRelative": true,
+                                                "mediumPath": "uploads/images/medium/mX3ufxb5yU.jpg",
+                                                "smallPath": "uploads/images/small/mX3ufxb5yU.jpg",
+                                                "thumbnailPath": "uploads/images/thumbnail/mX3ufxb5yU.jpg"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "actualJourneyInd": 2,
+                                "duration": 3,
+                                "fromDate": "06/15/2018",
+                                "toDate": "06/18/2018"
+                            },
+                            {
+                                "id": 6636,
+                                "toPlace": {
+                                    "id": 1132,
+                                    "name": "Paris",
+                                    "countryId": "FR",
+                                    "countryName": "France",
+                                    "translatedName": "Paris",
+                                    "translatedCountryName": "France",
+                                    "photographyHolder": {
+                                        "id": 638,
+                                        "photographies": [
+                                            {
+                                                "id": 500131,
+                                                "type": "LANDSCAPE",
+                                                "origin": "SELF_HOSTED",
+                                                "originalWidth": 960,
+                                                "originalHeight": 540,
+                                                "latitude": null,
+                                                "longitude": null,
+                                                "attribution": {
+                                                    "id": 500131,
+                                                    "sourceProvider": "Pixabay",
+                                                    "sourceName": "Pixabay",
+                                                    "url": "https://pixabay.com/en/eiffel-tower-lovely-photo-2810259/",
+                                                    "license": "CC0 1.0 Universal (CC0 1.0)",
+                                                    "authorUrl": "pixabay.com/en/users/daviddeolindo22-6606720/",
+                                                    "author": "daviddeolindo22 / 1 image",
+                                                    "title": "Eiffel Tower Lovely Photo",
+                                                    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                                                },
+                                                "multisized": true,
+                                                "largePath": "uploads/images/large/Y03wC0nTwU.jpg",
+                                                "pathRelative": true,
+                                                "mediumPath": "uploads/images/medium/Y03wC0nTwU.jpg",
+                                                "smallPath": "uploads/images/small/Y03wC0nTwU.jpg",
+                                                "thumbnailPath": "uploads/images/thumbnail/Y03wC0nTwU.jpg"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "actualJourneyInd": 3,
+                                "duration": 0,
+                                "fromDate": "06/18/2018",
+                                "toDate": "06/18/2018"
+                            }
+                        ],
+                        "price": 1078,
+                        "lowerPriceBound": 1246,
+                        "higherPriceBound": 2396,
+                        "accommodationPackageQuote": {
+                            "id": 1,
+                            "onBudgetQuote": 121.05,
+                            "threeStarsQuote": 167.77,
+                            "fourStarsQuote": 234.54001,
+                            "fiveStarsQuote": null
+                        }
+                    },
+                    // 4 more itineraries
+                ],
+                "totalResultsCount": 20,
+                "remainingCount": 15,
+                "offset": 0,
+                "resultsCount": 5
+            }
+        }
+    }    
+  
+              
+### Geo Structures [/geo/autocomplete{?query,geoTypes}]
+<a name="Geo"></a>
+
 Currently, there are no other Geo Endpoints but if you need more geo endpoints in order to map your
 geographic content to ours correctly, please feel free to send us a request, we would be delighted
-to develop this feature for you.
+to develop this feature for you. If you need more detailed information from this endpoint (like 
+latitude and longitude for example), feel free to contact us as well.
+
++ Parameters
+    + query: Pari (string) - The search query string
+    + geoTypes: DESTINATION,AIRPORT (array[GeoType]) - The type of Geo objects you want to query, it
+     can be DESTINATION and/or AIRPORT.
+    
 <a name="Autocomplete"></a>            
 ### Autocomplete [GET]
-
-+ Request (application/x-www-url-encoded-form) 
-    + Attributes 
-        - query: 'Pari' (string)
         
 + Response 200 (application/json)
 
@@ -430,6 +728,11 @@ to develop this feature for you.
 + `AFRICA` - Africa
 + `INDIA` - India
 
+
+## GeoType (enum[string])
+ + `DESTINATION` - City Type
+ + `AIRPORT` - Airport Type
+
 ## Tag (enum[string])
  + `CCUL` - CULTURE
  + `CHI` - HISTORIC
@@ -467,13 +770,35 @@ to develop this feature for you.
 
 ## `TripRequest` (object)
 
-- fromDate: `06/08/2018` (string) - The departure date of the trip
-- toDate: `06/18/2018` (string) - The end date of the trip
-- tags: (array[enum[Tag]]) - The tags the itinerary must match. The 4 last tags describe accommodations
-and not the destinations of the itineraries.
-- fromPlace: `DE1132` (string) - The starting place of the trip. This might be either an airport or a 
-destination (All Airports of this city). The available geographical entities can be retrieved using the
-[autocomplete endpoint](#Autocomplete).
-- passengers (array[Passenger])
-- region: ASIA (Region)
-- destinationsCount: `3` (number)
+- fromDate: `06/08/2018` (required, string) -
+ **Required** - The departure date of the trip.
+
+- toDate: `06/18/2018` (required, string) -
+ **Required** - The end date of the trip.
+
+- tags: (array[enum[Tag]]) -
+ **Optional** - The tags the itinerary must match. The 4 last tags describe accommodations and not the destinations
+ of the itineraries.
+
+- fromPlace: `DE1132` (string) -
+ **Required** The starting place of the trip. This might be either an airport or a destination (All Airports of 
+this city). The available geographical entities can be retrieved using the [autocomplete endpoint](#Autocomplete).
+
+- toPlace:  `DE1132` (string) -
+**Optional** The ending place of the trip. By default, it will be set to `fromPlace` parameter value. This might be
+either an airport or a destination (All Airports of this city). The available geographical entities can be retrieved
+ using the [autocomplete endpoint](#Autocomplete).
+
+- passengers (array[Passenger]) - 
+**Required** The passengers of the trip. This soon will be replaced by a string similar to this one : `A,A,16,4`.
+ There must be at least one adult in the passengers array.
+
+- region: ASIA (Region) - **Required** The region in which the trip should take place.
+
+- destinationsCount: `3` (number) - **Required** The exact number of destinations that shall appear in the itineraries.
+
+- flexibleDates: `false` (boolean) - **Optional** Wether the start/end date is flexible (+/- 1 day).
+
+- mustUseDestinations: DE308 (array[string]) - 
+**Optional** The ids of the destinations/airports the user wants to visit. The available geographical entities can be
+ retrieved using the [autocomplete endpoint](#Autocomplete).
