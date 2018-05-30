@@ -313,13 +313,31 @@ just after the generation endpoint.
     
 ### Retrieving Itineraries [/trip/multidestination/{propositionId}{?withAccommodationPackages,page}]
 
-We've decided that itineraries should be polled by page and that each page should contain up to 5 itineraries. (it will
-contain 5 or less itinerary on the last page of results). This decision was made because of the underlying prerequisite
-on Booking API. If we use your own hotel database, we might agree on a custom page size if you need this feature.
+For this endpoint, you will **need to use the `propositionId`** you gathered during the **previous generation API call**. 
+The page count of the previous response can also be useful altough pagination information are also precised in this
+endpoint response while we ensure that there is **at least one page** in any case. This means that checking the pages 
+count from the previous API call is not required but it all depends on how you integrate our API.
+
+At this stage, and if you set the `withAccommodationPackages` parameter to `true` (see the Example panel for more 
+information about this parameter), you will get the prices for different types of packages. Available packages are
+sorted amongst 4 categories : `ON_BUDGET`, `THREE_STARS`, `FOUR_STARS` and `FIVE_STARS`. 
+
+Each itinerary contains the **price of the flight only itinerary** as well as the **accommodation packages prices**.
+Displayed packages prices are **hotels only prices** so that the full real price should be **the sum of both the flight
+only and the hotels only prices.**
+
+Prices are summed up **for all passengers**. This means that what we return **is not the price per passenger** but 
+instead the **total price for all passengers**. This is true for all of our endpoints except otherwised mentionned.
+
+We've decided that itineraries should be polled by page and that **each page should contain up to 5 itineraries** 
+(it will contain 5 or less itinerary on the last page of results). This decision was made because of the underlying 
+prerequisites on Booking API. If we use your own hotel database, we might agree on a custom page size if you need 
+this feature.
 
 + Parameters
+    + propositionId: 542 (required, number) - The id of the proposition returned in the [generation endpoint](#Generation).
 
-    + withAccommodationPackages: true (boolean) - Wether you want to **activate the accommodation packages** feature here
+    + withAccommodationPackages: true (optional, boolean) - Wether you want to **activate the accommodation packages** feature here
      or not. This will give you the prices of the different packages available. <br/>
      
      If you used the tag `ON_BUDGET` or `COMFORT` in your generation request, this will **limitate the types of packages** 
@@ -330,9 +348,9 @@ on Booking API. If we use your own hotel database, we might agree on a custom pa
      to false in order to have far quicker responses. There is another way to retrieve it later using 
      [another endpoint](#GetItinerary).
      
-    + page: 0 (number) - By default, it will be set to 0. Pagination starts at 0 and the max page number you can fetch 
+    + page: 0 (optional, number) - By default, it will be set to 0. Pagination starts at 0 and the max page number you can fetch 
       is indicated in the [generation endpoint](#Generation) response `pagesCount` parameter. As the pagination start 
-      at index 0, the max page index you can fetch is equal to `pagesCount - 1`.
+      at index 0, the max page index you can fetch is equal to *`pagesCount - 1`*.
      
 ### Retrieve Generated Itineraries [GET]
     
@@ -613,10 +631,8 @@ on Booking API. If we use your own hotel database, we might agree on a custom pa
                             }
                         ],
                         "price": 1078,
-                        "lowerPriceBound": 1246,
-                        "higherPriceBound": 2396,
                         "accommodationPackageQuote": {
-                            "id": 1,
+                            "id": 206,
                             "onBudgetQuote": 121.05,
                             "threeStarsQuote": 167.77,
                             "fourStarsQuote": 234.54001,
@@ -632,15 +648,292 @@ on Booking API. If we use your own hotel database, we might agree on a custom pa
             }
         }
     }    
-  
-              
+ 
+### Retrieve an Itinerary [/trip/multidestination/itinerary/{itineraryId}] 
+<a name="GetItinerary"></a>
+This step **can be bypassed** and is useful almost only for **front-end direct integration**. You might want to skip
+directly to the next section.
+
+When you've retrieved the itineraries with or without the accommodation packages bind to it, you might want to gather an
+itinerary **alone** with its accommodation packages. That is what this endpoint can do and this definitely can facilitate
+your integration if you have a page to display the trip information where the user still have to select its package
+choice. This can also be used to query the accommodation packages only when needed for a single itinerary instead of
+the whole itineraries result set.
+
++ Parameters
+    + itineraryId: 21 (required, number) - The itinerary id you want to retrieve.
+
+### Retrieve an Itinerary [GET]
+
++ Response 200 (application/json)
+
+    {
+        "status": "SENT",
+        "httpStatus": 200,
+        "tokenExpiration": "05/30/2018 22:47:47.2620+00:00",
+        "apiCallId": 9120,
+        "contents": {
+            "itinerary": {
+                "id": 41,
+                "journeys": [
+                    {
+                        "id": 6713,
+                        "toPlace": {
+                            "id": 2372,
+                            "name": "Bangkok",
+                            "countryId": "TH",
+                            "countryName": "Thailand",
+                            "translatedName": "Bangkok",
+                            "translatedCountryName": "Thaïlande",
+                            "photographyHolder": {
+                                "id": 1316,
+                                "photographies": [
+                                    {
+                                        "id": 500341,
+                                        "type": "LANDSCAPE",
+                                        "origin": "SELF_HOSTED",
+                                        "originalWidth": 960,
+                                        "originalHeight": 540,
+                                        "latitude": null,
+                                        "longitude": null,
+                                        "attribution": {
+                                            "id": 500341,
+                                            "sourceProvider": "Pixabay",
+                                            "sourceName": "Pixabay",
+                                            "url": "https://pixabay.com/en/https://pixabay.com/fr/grand-palace-wat-phra-kaew-bangkok-1822487/",
+                                            "license": "CC0 1.0 Universal (CC0 1.0)",
+                                            "authorUrl": "pixabay.com",
+                                            "author": "",
+                                            "title": "Https://pixabay.com/fr/grand Palace Wat Phra Kaew Bangkok",
+                                            "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                                        },
+                                        "multisized": true,
+                                        "largePath": "uploads/images/large/mX3ufxb5yU.jpg",
+                                        "pathRelative": true,
+                                        "mediumPath": "uploads/images/medium/mX3ufxb5yU.jpg",
+                                        "smallPath": "uploads/images/small/mX3ufxb5yU.jpg",
+                                        "thumbnailPath": "uploads/images/thumbnail/mX3ufxb5yU.jpg"
+                                    }
+                                ]
+                            }
+                        },
+                        "actualJourneyInd": 0,
+                        "duration": 3,
+                        "fromDate": "06/08/2018",
+                        "toDate": "06/11/2018"
+                    },
+                    {
+                        "id": 6714,
+                        "toPlace": {
+                            "id": 2374,
+                            "name": "Chiang Mai",
+                            "countryId": "TH",
+                            "countryName": "Thailand",
+                            "translatedName": "Chiang Mai",
+                            "translatedCountryName": "Thaïlande",
+                            "photographyHolder": {
+                                "id": 1318,
+                                "photographies": [
+                                    {
+                                        "id": 604103,
+                                        "type": "LANDSCAPE",
+                                        "origin": "SELF_HOSTED",
+                                        "originalWidth": 480,
+                                        "originalHeight": 270,
+                                        "latitude": 18.7668,
+                                        "longitude": 98.9626,
+                                        "attribution": null,
+                                        "multisized": false,
+                                        "pathRelative": true,
+                                        "path": "uploads/images/small/MLl0CayizB.jpg"
+                                    }
+                                ]
+                            }
+                        },
+                        "actualJourneyInd": 1,
+                        "duration": 4,
+                        "fromDate": "06/11/2018",
+                        "toDate": "06/15/2018"
+                    },
+                    {
+                        "id": 6715,
+                        "toPlace": {
+                            "id": 2596,
+                            "name": "Guangzhou",
+                            "countryId": "CN",
+                            "countryName": "China",
+                            "translatedName": "Canton",
+                            "translatedCountryName": "Chine",
+                            "photographyHolder": {
+                                "id": 1429,
+                                "photographies": [
+                                    {
+                                        "id": 500364,
+                                        "type": "LANDSCAPE",
+                                        "origin": "SELF_HOSTED",
+                                        "originalWidth": 960,
+                                        "originalHeight": 540,
+                                        "latitude": null,
+                                        "longitude": null,
+                                        "attribution": {
+                                            "id": 500364,
+                                            "sourceProvider": "Pixabay",
+                                            "sourceName": "Pixabay",
+                                            "url": null,
+                                            "license": "CC0 1.0 Universal (CC0 1.0)",
+                                            "authorUrl": null,
+                                            "author": null,
+                                            "title": null,
+                                            "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                                        },
+                                        "multisized": true,
+                                        "largePath": "uploads/images/large/vMspZ4Sx8d.jpg",
+                                        "pathRelative": true,
+                                        "mediumPath": "uploads/images/medium/vMspZ4Sx8d.jpg",
+                                        "smallPath": "uploads/images/small/vMspZ4Sx8d.jpg",
+                                        "thumbnailPath": "uploads/images/thumbnail/vMspZ4Sx8d.jpg"
+                                    }
+                                ]
+                            }
+                        },
+                        "actualJourneyInd": 2,
+                        "duration": 3,
+                        "fromDate": "06/15/2018",
+                        "toDate": "06/18/2018"
+                    },
+                    {
+                        "id": 6716,
+                        "toPlace": {
+                            "id": 1132,
+                            "name": "Paris",
+                            "countryId": "FR",
+                            "countryName": "France",
+                            "translatedName": "Paris",
+                            "translatedCountryName": "France",
+                            "photographyHolder": {
+                                "id": 638,
+                               "photographies": [
+                                    {
+                                        "id": 500131,
+                                        "type": "LANDSCAPE",
+                                        "origin": "SELF_HOSTED",
+                                        "originalWidth": 960,
+                                        "originalHeight": 540,
+                                        "latitude": null,
+                                        "longitude": null,
+                                        "attribution": {
+                                            "id": 500131,
+                                            "sourceProvider": "Pixabay",
+                                            "sourceName": "Pixabay",
+                                            "url": "https://pixabay.com/en/eiffel-tower-lovely-photo-2810259/",
+                                            "license": "CC0 1.0 Universal (CC0 1.0)",
+                                            "authorUrl": "pixabay.com/en/users/daviddeolindo22-6606720/",
+                                            "author": "daviddeolindo22 / 1 image",
+                                            "title": "Eiffel Tower Lovely Photo",
+                                            "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                                        },
+                                        "multisized": true,
+                                        "largePath": "uploads/images/large/Y03wC0nTwU.jpg",
+                                        "pathRelative": true,
+                                        "mediumPath": "uploads/images/medium/Y03wC0nTwU.jpg",
+                                        "smallPath": "uploads/images/small/Y03wC0nTwU.jpg",
+                                        "thumbnailPath": "uploads/images/thumbnail/Y03wC0nTwU.jpg"
+                                    }
+                                ]
+                            }
+                        },
+                        "actualJourneyInd": 3,
+                        "duration": 0,
+                        "fromDate": "06/18/2018",
+                        "toDate": "06/18/2018"
+                    }
+                ],
+                "price": 1304,
+                "lowerPriceBound": 1472,
+                "higherPriceBound": 2848,
+                "accommodationPackageQuote": {
+                    "id": 6,
+                    "onBudgetQuote": 122.81,
+                    "threeStarsQuote": 177.70999,
+                    "fourStarsQuote": 275.64,
+                    "fiveStarsQuote": 584.17004
+                }
+            }
+        }
+    }
+
+
+### Build Itinerary [/trip/multidestination/build/{itineraryId}{?withPackage}]
+
+This endpoint will allow you to **build a trip** out of a given **accommodation package type** and an **itinerary id**
+This means that while paths and journeys were built neither the accommodations nor the trip entity were built yet and 
+they need to be built in. The goal here is to **build the accommodations on top of the new trip entity** with the above 
+mentionned **package and itinerary**. 
+
+This endpoint will return the freshly generated trip id and key. When the trip is fully generated, we issue a key to 
+ensure that **it can only be modified by its owner**. Keys were thought to safeguard the trip pages as a password do. When
+used in our front-end application, they are stored in the local storage of the end-user browser so that if they refresh
+page, they will still have access to their trip but if they share this url, the other user won't be able to see this
+trip page and therefore won't be able to edit it. In fact, once the trip is generated, every endpoint are safeguarded
+by the same key scheme and this is in order to avoid concurrent modifications which could lead to both strange 
+behaviors on our side but more importantly, strange behavior as perceived by an end-user even in the case where it 
+worked technically correctly.
+
+The `discountPercentage` field **doesn't represent any real world value**. It is just a hashed quantity based on the id 
+and the price of this trip that never change (except if the price changes). This can be used as a fake discount 
+percentage in front-end application or just bypassed.
+
+If the package isn’t defined for the given trip proposition, or if no accommodation package was previously retrieved, 
+(for example if you never used the `withAccommodationPackagesQuote` parameter when you retrieved the itinerary you are 
+trying to build) then this request will fail and **end up with a 422 error**. Sometimes, (altough very rarely) the
+package is not anymore live because the prices yield since they were proposed. In this case, a **404 will be thrown**
+ and the end-user will be asked to choose another trip proposition.
+
++ Parameters
+    + itineraryId: 21 (required, number) -  The id of the selected itinerary.
+    + withPackage: FOUR_STARS (required, PackageCategory) - The category of the package selected. can be one of 
+    <br/>`ON_BUDGET` : Any unranked or below 3 stars hotel.
+    <br/>`THREE_STARS` : Any 3 stars hotel.
+    <br/>`FOUR_STARS` : Any 4 stars hotel.
+    <br/>`FIVE_STARS` : Any 5 stars hotel.
+    <br/>
+    
+    
+### Build Your Itinerary [PUT]
+
++ Response 200 (application/json)
+
+    {
+        "status": "SENT",
+        "httpStatus": 201,
+        "tokenExpiration": "05/31/2018 00:14:11.9350+00:00",
+        "apiCallId": 9125,
+        "contents": {
+            "trip": {
+                "id": 545,
+                "key": "QjwUAHqTDQXgPaJryC0R",
+                "createdAt": "05/31/2018 01:14",
+                "updatedAt": "05/31/2018 01:14",
+                "discountPercentage": 65
+            },
+            "request": {
+                "id": 489
+            }
+        }
+    }
+
+               
 ### Geo Structures [/geo/autocomplete{?query,geoTypes}]
 <a name="Geo"></a>
 
-Currently, there are no other Geo Endpoints but if you need more geo endpoints in order to map your
-geographic content to ours correctly, please feel free to send us a request, we would be delighted
-to develop this feature for you. If you need more detailed information from this endpoint (like 
-latitude and longitude for example), feel free to contact us as well.
+This endpoint can mix up **several types of geo entities** in a single **autocomplete tool**. You 
+can select the types of geo entities you are interested in. Currently, only cities and airports are
+supported.
+
+There is no other Geo Endpoints but if you need more geo endpoints in order to map your geographic 
+content to ours correctly, please feel free to send us a request, we would be delighted to develop 
+this feature for you. If you need more detailed information from this endpoint (like latitude and 
+longitude for example), feel free to contact us as well.
 
 + Parameters
     + query: Pari (string) - The search query string
@@ -714,7 +1007,7 @@ latitude and longitude for example), feel free to contact us as well.
             
 # Data Structures
 
-## `Passenger` (object)
+## Passenger (object)
 
 - `age`: `19` (number)
 
@@ -767,6 +1060,13 @@ latitude and longitude for example), feel free to contact us as well.
  + `COB` - ON_BUDGET
  + `CMF` - COMFORT
  + `CCC` - CITY_CENTER            
+ 
+ 
+## PackageCategory (enum[string])
+ + `ON_BUDGET` - Any unranked or below 3 stars hotel.
+ + `THREE_STARS` - Any 3 stars hotel.
+ + `FOUR_STARS` - Any 4 stars hotel.
+ + `FIVE_STARS` - Any 5 stars hotel.
 
 ## `TripRequest` (object)
 
