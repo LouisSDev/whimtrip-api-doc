@@ -1,0 +1,479 @@
+FORMAT: 1A
+HOST: https://api.whimtrip.fr/v1
+
+# Whimtrip
+
+
+# How it works
+
+Whimtrip API is a set of multi destination API tools to **fully automatize the multi-destination trip 
+creation** process.
+
+It was designed to be as flexible as possible. As an early stage version of our API, it is possible to
+**request custom features**.
+
+Altough our API allows you to build completely custom business logic at each step, **the overall process
+is quite guided** and should be the same for almost any usecase.
+
+
+## Steps
+
+ - Generate a multi-destination trip skeletton out of an input form. This skeletton will be later 
+refered as a **proposition**.
+ - Retrieve the itineraries page per page according to your needs. If you need **accommodation packages** 
+bundled with the propositions they can be returned with the itineraries. At this step, you only have 
+**price quote** and **itinerary destinations** but not much more information.
+ - Generate the selected **package** for the selected **itinerary**.
+ - Retrieve the **Generated trip**.
+ - Customize it (**Change hotels** and much more to come).
+ - Proceed to **Booking Step** (Yet only **booking tokens** forwarding is supported).
+
+## Indications
+
+
+Each generated trip is **historized** in our databases. Not only the trip is historized but 
+**almost everything** that comes with it.
+
+This means that any **generated trip** can be retrieved at any time. When retrieved, **the trip will always
+be refreshed first** so that its *price can change* or its *availability can even disapear* leading to 
+further described exceptions.
+
+
+# General Knowledge
+
+<a name="Authentication"></a>
+## Authentication
+
+Authentication can be provided in two different ways : 
+
+- Using the `X-API-Key` header of your requests with your dedicated API key.
+- [Authenticate](#Authenticate) and add your session token to each request in the `X-Auth-Token` header.
+
+
+While the first method is much more **developer friendly**, the second one allows you to **get the most out
+of our API**. In fact, if you authenticate a Whimtrip Session for each end user, you'll be able to have
+**detailed data about users behavior with our API** without any further development on your side using
+your backoffice access page.
+
+Please remember that whatever is the solution you choose, your API-Key shall remain **entirely private**
+and **shouldn't be used directly in any front-end application** but hidden in server-side computing.
+
+For very particular use cases where you must use our API directly in your front-end app, we recommend
+you use a **3rd authentication method** we developped internally. Please contact us directly if you need 
+more information about it.
+
+## Default Headers
+
+There are a few general purpose headers you shall use anywhere or almost anywhere :
+
+- `X-Auth-Token`  :  Put your user **session token** here.
+- `X-API-Key` : Put your **API key** here (only if `X-Auth-Token` header isn't used).
+- `Content-Type` : You should set it to `application/json` for each `POST`, `PUT`, `PATCH` and `DELETE`
+request.
+- `Accept-Language` : Set your **locale** here. Currently, only `FR` and `EN` are fully supported. While 
+we support more locales, our geographical content and errors is not fully translated yet. Please contact
+us if you need more locales support.
+- `X-Forwarded-For` : Set the end user ip address it was forwarded for here. If enabled, this will help us
+identify returning users (This works coupled with the `User-Agent` header).
+- `User-Agent` : Set the end user **user-agent** of its browser to help us identify returning customers. If 
+correctly done, this will give you better understanding of the statistical data we collect.
+
+
+## GDPR Compliance
+
+As a french company, we take GDPR compliance very seriously. We are committed to be as transparent 
+about our processings as possible. 
+
+We've stated in the two above sections that we use the end user ip address as well as its User-Agent
+header in order to identify them as uniquely as possible. Further more, we also stated that using 
+session authentication can help you leverage the true power of our API. Yet, **those information are 
+personal informations** and we are not entitled to handle them that easily or at least we don't want to do
+so. 
+
+*Does that mean you shouldn't forward us ip addresses and User-Agent header ?* Well not exactly, this 
+simply mean we have to handle them carefully. We ask our developers to **remove the last byte 
+of the ip address** of the end user or replace it with a `0`. If you don't do it, we will in any case 
+replace it with `0`. Given the three first byte of an ip address, the location of their real world issuer
+is so wide that **it cannot be mapped back to a unique user** or family. Not even with the User-Agent
+header.
+
+This imply that we can still identify returning users in most cases but without being able to identify
+them, and without the help of any kind of cookie or user stored data. Of course, this  method doesn't 
+work as well as the cookie method that Google Analytics uses for example, but it does give great 
+aggregated measures for correctly understanding your usage of our API.
+
+
+## CORS
+
+Our API supports [**CORS standard**](https://fr.wikipedia.org/wiki/Cross-origin_resource_sharing).
+The `Origin` header can be used to set up the origin of the request. The request won't be accepted if 
+the origin is not part of the origins you added from your developper office. By default, all 
+origins are accepted.
+
+You can also limit the ips that are allowed to use your API-key in your account settings.
+
+## Set-Up   
+
+The Set-Up process is quite simple, you shall create a Developper account [here](https://developer.whimtrip.fr).
+
+***Please note that this feature is not yet supported and developer have to go through a manual 
+account creation process by contacting us directly.***
+
+You will then be able to **create and add API keys** through your account page and setup the access rights
+for it *(ips allowed, origins allowed, api call limits if any...)*.
+
+## Response Template
+
+All of our 2xx responses body follow the same scheme described below :
+
+
+
+         {
+          
+            "status": "SENT",
+            "httpStatus": 200,
+            "tokenExpiration": "05/29/2018 17:05:52.7260+00:00",
+            "apiCallId": 9095,
+            "contents": {
+                // Some Object(s)
+            }  
+            
+    }
+    
+
+Please note that the `tokenExpiration` field won't show up if you use session less authentication.
+
+`apiCallId` can be used for debug purposes. You can submit us manually the API call id in case of any
+internal server error for us to better understand it. Additionally, we designed an endpoint for automatic
+exception reporting. Please contact us if you are interested in it.
+
+`contents` might contains a JSON object or array depending on the endpoint.
+
+Even though we send you `httpStatus` param, we still use real Http Status and the HttpStatus is the one
+that should be checked whatsoever happens.
+
+
+## Errors
+
+Errors are 4xx or 5xx HTTP status code responses. They will always follow the same structure :
+            
+        {
+    
+            "status": "FAILED",
+            "httpStatus": 404,
+            "tokenExpiration": "05/29/2018 17:32:46.1920+00:00",
+            "apiCallId": 9096,
+            "errorDetails": {
+                "canonicalError": "_error_trip_not_mocked",
+                "errorValue": "This isn't a trip proposition results list. Did you modified manually the URL?"
+            }
+                        
+    }
+
+Except for `errorDetails` and disapearance of `contents` in the payload, this is the same schema as
+with 2xx responses.
+
+`canonicalError` contains the error code and `errorValue` contains the localized error message that
+can be prompted to the end user directly. The locale is the one submitted with the `Accept-Language`
+header.
+
+For validation errors 4xx, there are additionnal information in the `errorDetails` object :
+
+    {
+            
+        "status": "FAILED",
+        "httpStatus": 404,
+        "tokenExpiration": "05/29/2018 17:32:46.1920+00:00",
+        "apiCallId": 9096,
+        "errorDetails": {
+            "canonicalError": "_error_any_validation_failed",
+            "errorValue": "Submitted form contains validation errors, please review it",
+            "errors": [
+                {
+                    "canonicalError": "_error_trip_wrong_from_date",
+                    "fieldConcerned": "fromDate",
+                    "errorValue": "Departure date cannot be in the past"
+                },
+                {
+                    "canonicalError": "_error_trip_wrong_to_date",
+                    "fieldConcerned": "toDate",
+                    "errorValue": "Return date cannot be in the past"
+                }
+            ]
+        }
+    }
+    
+    
+    
+The `fieldConcerned` field describe the input property that led to this exception.
+
+Currently, validations errors are not properly handled in `GET` query parameters and generally in all URL 
+query parameter because they are processed in a different way. This problem will be addressed soon in 
+order to provide a better understanding of those errors.
+
+Similarly badly typed enumeration values leads to validation errors with nearly no information to correct
+it. This shall be addressed soon as well.
+    
+## Errors Status Code
+
+- `400 - Bad Request` indicates a **validation error**
+- `401 - Unauthaurized` indicates that this **request cannot be authorized**. This might be because of your
+API key, the issuer of the request, an eventual login failure, a forbidden domain, a bad token or an 
+expired token or because you are not connected.
+- `403 - Forbidden` indicates a **blacklisted ip** or a **lack of right** to access an endpoint. 
+Additionnally, this might refer to  **any forbidden action** such as trying to access to a trip 
+without owning it.
+- `404 - Not Found` indicates that **the required resource wasn't found** or that the corresponding search
+didn't yield any result.
+- `406 - Not Acceptable` indicates that the **Content-Type requested isn't available**. Currently, only
+`Content-Type : application/json` is supported and `JSON` is the ony output format available. We plan
+to add soon enough the possibility to interact with our API using `XML` schemas.
+- `410 - Gone` indicates that the requested **resource is not anymore available**. This might also indicate
+that the action cannot be performed anymore. Retrying the request will yield the exact same status code.
+- `422 - Unprocessable Entity` indicates that the entity submitted or request submitted **isn't valid**.
+While this might sound pretty much **similar to a validation error**, those errors usually occures in 
+deeper parts of the checking process after the easy validation itself. Most of the time, this require 
+a pre-processing before being able to trigger it and this is the reason why it cannot be done as a 
+part of the validation process.
+- `429 - Too Many Requests` indicates that you hit your **daily API limit** or that you performed 
+**too many request simultaneously**.
+- `5xx - Internal Server Error` indicates that an **unknown error** occured on our side. This error will 
+be logged in our database in order for us to correct it as soon as possible. However, you can send us more
+detailed information if you wish by **contacting us with the provided error response** and a description 
+of what you were doing at the moment the exception occured. We will do our best to correct those errors as
+soon as possible and to carefully unit test their behavior.
+
+## REST
+
+We strongly believe in the beauty and clarity of REST protocol. Our whole API is based as much as possible
+on [REST protocol](https://fr.wikipedia.org/wiki/Representational_state_transfer). You can check the wiki
+article if you are not familiar with it yet.
+
+
+<a name="Authenticate"></a>
+## Authenticate [/authenticate]
+
+
+This endpoint will allow you to issue a session token for a single end-user. The retrieved token can
+be used in the `X-Auth-Token` header in each concerned requests. For detailed information about the 
+different authentication scheme we provide, you can refer to [this part](#Authentication).
+
+### Authenticate [POST] 
+
+
++ Request (application/json)
+
+        {
+            "key": "YOUR_API_kEY"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "status": "SENT",
+            "httpStatus": 201,
+            "tokenExpiration": "05/29/2018 23:34:50.3220+00:00",
+            "apiCallId": 9105,
+            "contents": {
+                "token": "eyJzdCI6Ik5qRXpNRE09LU9EZ3pOemc9LU1USTVNZz09LVVETXZiRGxCIiwiaWQiOiJRMjFWUyJ9"
+            }
+        }
+        
+           
+
+### Propositions [/trip/multidestination/generate]
+
+The propositions endpoint are the entry point of the trip automation process. This contains two steps.
+The first one consist in submitting the trip creation form. The second one will be about retrieving the
+generated multi-destination trips itineraries.
+
+### Generate a Trip  [POST]
+
++ Request (application/json)
+    + Attributes (TripRequest)
+
++ Response 200 (application/json)
+  
+
+### Create a New Question [PUT]
+
+
++ Request (application/json)
+
+        {
+            "question": "Favourite programming language?",
+            "choices": [
+                "Swift",
+                "Python",
+                "Objective-C",
+                "Ruby"
+            ]
+        }
+
++ Response 201 (application/json)
+
+    + Headers
+
+            Location: /questions/2
+
+    + Body
+
+            {
+                "question": "Favourite programming language?",
+                "published_at": "2015-08-05T08:40:51.620Z",
+                "choices": [
+                    {
+                        "choice": "Swift",
+                        "votes": 0
+                    }, {
+                        "choice": "Python",
+                        "votes": 0
+                    }, {
+                        "choice": "Objective-C",
+                        "votes": 0
+                    }, {
+                        "choice": "Ruby",
+                        "votes": 0
+                    }
+                ]
+            }
+            
+
+
+<a name="Geo"></a>            
+### Geo Structures [/geo]
+Currently, there are no other Geo Endpoints but if you need more geo endpoints in order to map your
+geographic content to ours correctly, please feel free to send us a request, we would be delighted
+to develop this feature for you.
+<a name="Autocomplete"></a>            
+### Autocomplete [GET]
+
++ Request (application/x-www-url-encoded-form) 
+    + Attributes 
+        - query: 'Pari' (string)
+        
++ Response 200 (application/json)
+
+     {
+     
+        "status": "SENT",
+        "httpStatus": 200,
+        "tokenExpiration": "05/30/2018 16:43:07.8930+00:00",
+        "apiCallId": 9110,
+        "contents": {
+            "results": [
+                {
+                    "id": "DE1132",
+                    "name": "Paris",
+                    "cityName": "Paris",
+                    "countryName": "France",
+                    "iata": "PAR",
+                    "geoType": "DESTINATION"
+                },
+                {
+                    "id": "DE5650",
+                    "name": "Parintins",
+                    "cityName": "Parintins",
+                    "countryName": "Brazil",
+                    "iata": "PIN",
+                    "geoType": "DESTINATION"
+                },
+                {
+                    "id": "AI1181",
+                    "name": "Paris Beauvais Tillé Airport",
+                    "cityName": "Paris",
+                    "countryName": "France",
+                    "iata": "BVA",
+                    "geoType": "AIRPORT"
+                },
+                {
+                    "id": "AI1185",
+                    "name": "Charles de Gaulle International Airport",
+                    "cityName": "Paris",
+                    "countryName": "France",
+                    "iata": "CDG",
+                    "geoType": "AIRPORT"
+                },
+                {
+                    "id": "AI1186",
+                    "name": "Paris-Orly Airport",
+                    "cityName": "Paris",
+                    "countryName": "France",
+                    "iata": "ORY",
+                    "geoType": "AIRPORT"
+                },
+                {
+                    "id": "AI5418",
+                    "name": "Parintins Airport",
+                    "cityName": "Parintins",
+                    "countryName": "Brazil",
+                    "iata": "PIN",
+                    "geoType": "AIRPORT"
+                }
+            ]
+        }
+    }
+            
+# Data Structures
+
+## `Passenger` (object)
+
+- `age`: `19` (number)
+
+## Region (enum[string])
++ `EUROPE` - Europe
++ `ASIA` - Asia
++ `NORTH_AMERICA` - Northern America
++ `SOUTH_AMERICA` - South America
++ `MIDDLE_EAST` - Middle East
++ `OCEANIA` - Oceania
++ `AFRICA` - Africa
++ `INDIA` - India
+
+## Tag (enum[string])
+ + `CCUL` - CULTURE
+ + `CHI` - HISTORIC
+ + `CUN` - UNESCO
+ + `CFO` - FOOD
+ + `CWI` - WINE
+ + `COLD` - OLDTOWN
+ + `CARC` - ARCHITECTURE
+ + `CCAT` - CATHEDRAL
+ + `MMUS` - MUSIC
+ + `NNAT` - NATURE
+ + `NMOU` - MOUNTAIN
+ + `NSEA` - SEA
+ + `HNIG` - NIGHTLIFE
+ + `SGOL` - GOLF
+ + `SURF` - SURF
+ + `SSK` - SKI
+ + `SDIV` - DIVING
+ + `TPOP` - POPULAR
+ + `TSHO` - SHOPPING
+ + `TWO` - WONDER
+ + `TCIT` - CITY
+ + `TCAP` - CAPITALES
+ + `TROM` - ROMANTIC
+ + `TCAS` - CASINO
+ + `GNE` - NORTHERN_EUROPE
+ + `GSA` - SOUTHEAST_ASIA
+ + `GEE` - EASTERN_EUROPE
+ + `GCAR` - CARAIBES
+ + `OFA` - FAMILY
+ + `CWB` - WELL_BEING
+ + `COB` - ON_BUDGET
+ + `CMF` - COMFORT
+ + `CCC` - CITY_CENTER            
+
+## `TripRequest` (object)
+
+- fromDate: `06/08/2018` (string) - The departure date of the trip
+- toDate: `06/18/2018` (string) - The end date of the trip
+- tags: (array[enum[Tag]]) - The tags the itinerary must match. The 4 last tags describe accommodations
+and not the destinations of the itineraries.
+- fromPlace: `DE1132` (string) - The starting place of the trip. This might be either an airport or a 
+destination (All Airports of this city). The available geographical entities can be retrieved using the
+[autocomplete endpoint](#Autocomplete).
+- passengers (array[Passenger])
+- region: ASIA (Region)
+- destinationsCount: `3` (number)
