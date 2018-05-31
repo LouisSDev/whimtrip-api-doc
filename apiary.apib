@@ -125,6 +125,11 @@ account creation process by contacting us directly.***
 You will then be able to **create and add API keys** through your account page and setup the access rights
 for it *(ips allowed, origins allowed, api call limits if any...)*.
 
+Altough the first setup is quite simple, **it won't give you access to accommodations related endpoints**. In fact, 
+we use Booking.com API to provide us with hotel real time data and **they strictly forbidden data forwarding**. Those
+feature will be enabled for you as soon as **we will have installed your own hotel databases / API** so that we'll
+be able to fetch and process your hotel instead of Booking.com's API's data.
+
 ## Response Template
 
 All of our 2xx responses body follow the same scheme described below :
@@ -253,6 +258,401 @@ on [REST protocol](https://fr.wikipedia.org/wiki/Representational_state_transfer
 article if you are not familiar with it yet.
 
 
+## Content Caching
+
+*This part of the documentation is not yet ready.*
+
+## Images Content
+
+*This part of the documentation is not yet ready.*
+
+
+# Concepts
+
+## Accommodation Pakages
+
+While we won't get into all the details of the packaging system, you have to know the basics of how it all work.
+Given a destination and the dates to find a package for, we want to find a package that includes **one or more hotels
+in a reasonable price range**.
+ 
+To do so, we pick the **cheapest hotel** corresponding to **user query** and then try to find other accommodation bookings
+at similar prices. We then take the **highest price of those accommodation bookings** and set it as the **price for all
+of the accommodation booking comprised in the package**. This means that the margin is **even greater** using this method
+all the while preserving **very interesting prices**. In any package, there must be **at least one hotel** but there is no
+upper limit on the quantity of hotels it can hold.
+
+# Object Structures
+
+<a name="Journey"></a>
+## Journey
+
+We will focus here first on the`Journey` object.
+```
+{
+
+    "id": 6337,
+    "toPlace": { 
+        // ... The destination object (similar from all other destination objects in this API) 
+     },
+    "actualJourneyInd": 0,
+    "duration": 3,
+    "price": 663.45,
+    "fromDate": "06/08/2018",
+    "toDate": "06/11/2018",
+    "path": { 
+        // ... The mean of transportation for this journey 
+    },
+    "accommodationBooking": { 
+        // ... Some accommodation booking 
+    },
+    "accommodationPackagesQuote": { 
+        // ... Some accommodation package quote 
+    },
+    "alternativeAccommodationBookings": [
+        // ... some accommodation bookings 
+    ]    
+}
+```
+
+Each journey has a **unique `id`** that you will use later on to **refer to it**. It also has a `toPlace` destination. 
+We do not show the `fromPlace` destination here because it is supposed to be found in the previous journey `toPlace`.
+For the first journey of the itinerary altough, the `fromPlace` can be retrieved from the request object itself. 
+
+
+
+After that, you will find some **basic information about the journey** : the `actualJourneyInd` is the index of the 
+journey in the itinerary. Here, as you can see this is the first journey of the trip. The duration of the journey
+counts the **number of nights stay** in `toPlace`. The price is the **total price of the journey** for all passengers 
+and sums both the choosen accommodation booking price and the price of the mean of transportation. `fromDate` and 
+`toDate` indicates both the starting and ending date of the journey.
+
+The journey then have a `path` which will contain **the mean of transportation used**. Yet, only flights are supported 
+but we plan to introduce trains, buses or car rental at some point. The path describes **how you get from `fromPlace`
+to `toPlace`**. The destination you will visit and stay in during your journey is the one mentionned in the`toPlace`
+field. Thus, **the last journey only contains a return path** but no accommodation booking or any accommodation related
+element. 
+
+
+### Mean Of Transportation
+
+We will further describe the path entity here :
+```
+{
+
+    "id": 8175,
+    "fromDate": "06/08/2018 00:00",
+    "toDate": "06/08/2018 00:00",
+    "price": 1298,
+    "type": "FLIGHT",
+    "distanceTravelled": 5615,
+    "quoteCreatedAt": "05/31/2018 08:52:46.0000+00:00",
+    "cache": true,
+    "quoteDatetime": "05/31/2018 08:52:46.0000+00:00",
+    "companies": [
+        {
+            "id": 122,
+            "name": "Aegean Airlines",
+            "iataCode": "A3",
+            "type": "AIRLINE",
+            "rawLogoUrl": "https://s1.apideeplink.com/images/airlines/A3.png",
+            "companyClass": "UNKNOWN"
+        }
+    ],
+    "durationInMinutes": null,
+    "flightExtension": {
+         "id": 658,
+         "stops": [
+               {
+                   "id": 1,
+                   "toAirport": {
+                       "id": 1206,
+                       "name": "Eleftherios Venizelos International Airport",
+                       "iata": "ATH",
+                       "translatedName": "Aéroport Eleftherios Venizelos International"
+                   },
+                   "fromDate": "05/17/2018 16:40",
+                   "toDate": "05/17/2018 20:50",
+                   "carrier": {
+                       "id": 122,
+                       "name": "Aegean Airlines",
+                       "iataCode": "A3",
+                       "type": "AIRLINE",
+                       "rawLogoUrl": "https://s1.apideeplink.com/images/airlines/A3.png",
+                       "companyClass": "UNKNOWN"
+                   },
+                   "duration": 250
+               }
+         ],
+         "fromAirport": {
+               "id": 1186,
+               "name": "Paris-Orly Airport",
+               "iata": "ORY",
+               "translatedName": "Aéroport Paris-Orly"
+         },
+         "toAirport": {
+               "id": 1331,
+               "name": "Antalya International Airport",
+               "iata": "AYT",
+               "translatedName": "Aéroport Antalya International"
+         },
+         "apiCompany": "KIWI"
+     },
+    "transportationClass": "ECONOMY",
+    "ticketType": "MULTIDESTINATION_MASTER_TICKET",
+    "bookingAgent": {
+        "id": 31,
+        "name": "Kiwi",
+        "rawLogoUrl": "https://www.kiwi.com/images/logos/kiwicom/navbar.png"
+    },
+    "bookingSession": {
+        "id": 2015,
+        "origin": "KIWI",
+        "createdAt": "05/31/2018 08:52:46.0000+00:00",
+        "agent": {
+            "id": 31,
+            "name": "Kiwi",
+            "rawLogoUrl": "https://www.kiwi.com/images/logos/kiwicom/navbar.png"
+        },
+        "price": 1298,
+        "valid": true,
+        "refreshable": false,
+        "expiresAt": "05/31/2018 10:52:46.0000+00:00",
+        "modifiable": false,
+        "expired": false
+    }
+}
+```
+
+In this object, we want to further explain three main elements : The `flightExtension` field which contains
+information **about the flight itself**. As mentionned earlier, we plan to add support for more type of means of 
+transportation. That's why there is a nested specific object containing **flight details**. Yet, it displays, `fromAirport`
+and `toAirport` as well as `stops` fields. Then there is also the ticket type you might want to pay attention to.
+`MULTIDESTINATION_MASTER_TICKET` means that **this is the first ticket of the multi destination trip** but also that
+**it holds the price for the whole itinerary** (the other flight prices will have a value of 0). 
+
+The booking agent refers to where you **should purchase your bookings** and where we will redirect your users for the
+payment. As we also **provide the booking tokens directly**, this also means that you can **purchase them directly** 
+for your end-user via our data provider. Yet, for flights, we only use **Kiwi datas**. Finally, you will find a 
+`bookingSession` object. This object reflect the **state of the session** for booking the corresponding flight. This
+object is also used accros all entities that can be booked, so accommodations are concerned as well. Each booking 
+session hold parameters describing **how you should interact with it**. Once a session is expired, it must be refreshed
+(if supported, use `refreshable` field to know if this is the case) **with no liability that the price will remain the
+same once refreshed**.
+
+
+### Accommodations
+
+<a name="Accommodation"></a>
+#### Accommodation Booking
+
+The last three fields are related to **the accommodation part** of the trip. The first one of them is the actually
+choosen accommodation booking. We will deep dive into its structure now to understand what it contains.
+
+```
+{
+
+    "id": 138,
+    "accommodation": {
+        "accommodation": {
+        "id": 7905,
+        "origin": "BOOKING",
+        "name": "Harrington Park Resort",
+        "latitude": 36.86019,
+        "longitude": 30.63321,
+        "starRating": 7.4,
+        "reviewsNumber": 538,
+        "url": "https://www.booking.com/hotel/tr/harrington-park-resort.html",
+        "description": "Located on Konyaalti Beach, Harrington Park Resort offers..", // and so on and so forth
+        "params": {
+            "prefered": true,
+            "importantInformation": "",
+            "welcomeMessage": "Our hotel is located on the most of beatiful and Antalya’s...", // and so on and so forth
+            "facilities": [
+                "Parking",
+                "Restaurant",
+                "Room service",
+                ...
+            ]
+        },
+        "address": "Gursu Mahallesi Akdeniz Bulvari 192 Sokak Konyaalti",
+        "zip": "07070",
+        "currency": "EUR",
+        "hotelClass": 5,
+        "photographyHolder": {
+            "id": 42151,
+            "photographies": [
+                {
+                    "id": 368736,
+                    "type": "LANDSCAPE",
+                    "origin": "BOOKING",
+                    "originalWidth": 1024,
+                    "originalHeight": 1024,
+                    "latitude": 36.8602,
+                    "longitude": 30.6332,
+                    "attribution": {
+                        "id": 365338,
+                        "sourceProvider": "booking.com",
+                        "sourceName": "booking.com",
+                        "url": null,
+                        "license": null,
+                        "authorUrl": "booking.com",
+                        "author": "booking.com",
+                        "title": "Harrington Park Resort photography 1_300",
+                        "licenseUrl": null
+                    },
+                    "multisized": false,
+                    "pathRelative": false,
+                    "path": "https://aff.bstatic.com/images/hotel/max1024x768/855/85501741.jpg"
+                }
+            ]
+        },
+        "distanceToCityCenter": 7.1454754
+    },
+    "price": 5040,
+    "quoteDateTime": "02/03/2018 21:36",
+    "roomBookings": [
+        {
+            "id": 163,
+            "price": 2520,
+            "passengers": [
+                {
+                    "id": 89,
+                    "age": 21
+                },
+                {
+                    "id": 90,
+                    "age": 21
+                }
+            ]
+        },
+        {
+            "id": 164,
+            "price": 2520,
+            "passengers": [
+                {
+                    "id": 91,
+                    "age": 21
+                },
+                {
+                    "id": 92,
+                    "age": 21
+                }
+            ]
+        }
+    ],
+    "commonRoomBlock": {
+        "id": 141,
+        "room": {
+            "id": 139,
+            "roomSurfaceInSquareMeters": 75,
+            "name": "Suite with Terrace",
+            "description": "Suite with mountain views offers air-conditioning...", // some more text here
+            "photographyHolder": {
+                "id": 49808,
+                "photographies": [
+                    {
+                        "id": 449406,
+                        "type": "LANDSCAPE",
+                        "origin": "BOOKING",
+                        "originalWidth": 1024,
+                        "originalHeight": 1024,
+                        "latitude": 36.8602,
+                        "longitude": 30.6332,
+                        "attribution": {
+                            "id": 446010,
+                            "sourceProvider": null,
+                            "sourceName": "booking.com",
+                            "url": null,
+                            "license": null,
+                            "authorUrl": null,
+                            "author": null,
+                            "title": "1_500",
+                            "licenseUrl": null
+                        },
+                        "multisized": false,
+                        "pathRelative": false,
+                        "path": "https://aff.bstatic.com/images/hotel/max1024x768/774/77420032.jpg"
+                    }
+                ]
+            },
+            "bedroomsCount": 1,
+            "bathroomsCount": 1
+        },
+        "maxOccupancy": 2,
+        "maxChildrenFree": 1,
+        "maxChildrenFreeAge": 6,
+        "mealPlan": "NONE",
+        "breakfastIncluded": true,
+        "refundable": true
+    },
+    "pageNumber": 0,
+    "roomsNumber": 2,
+    "deeplink": "https://www.booking.com/hotel/tr/harrington-park-resort.html?aid=1312052&checkin=2018-04-15&checkout=2018-04-22&room_1=A,A,A,A",
+    "pricingExpired": true
+}
+
+```
+
+
+This data structure is **completely localized** according to what you specified in your `Accept-Language` header. 
+It first contains the **`accommodation` the end-user will stay in**. Then, there are two more objects you should 
+pay attention to. The `roomBookings` object describe how we **mapped passengers to rooms**. This is essential when 
+dealing with complex passenger list. The last object here is the`commonRoomBlock` object which describes the **room 
+choosen**. Yet, we don't support mapping passengers to different rooms to optimize their pricing but this is a feature 
+we are looking toward to integrate in a near future. Also, please note that the `mealPlan` field is an enumeration 
+that can take those values : {`NONE`, `HALF_BOARD`, `FULL_BOARD`, `ALL_INCLUSIVE`}.
+
+
+#### Alternative Accommodations
+
+This array contains **other accommodation bookings** you might choose a booking from. There will always be **3
+results** in this array, except if you are on the last page (in this case there might be less than 3 accommodation 
+bookings).
+
+Alternative Accommodations are **not always included** in the package and their price should be **checked against** the 
+choosen accommodation booking (`accommodationBooking` field). Their price **might even be lower** than the
+`accommodationBooking` price if the choosen accommodation was already modified previously. 
+
+Alternative Accommodations is a **paginated array** for which you always receive the **first page** when using the`GET` 
+trip endpoint. There are dedicated endpoints to **see the other pages** of those alternative accommodations or to
+replace the choosen `accommodationBooking` by one of the `accommodationBooking` in this array.
+
+#### Accommodation Packages Quote
+
+
+The last element we will describe here is the `accommodationPackagesQuote` object. It will will give you information 
+on **how to query alternative accommodations**. For each available package, it will give its **price** as well as the
+**number of accommodation booking's pages** you can query that matches your original search query. In the below example,
+the city was a very popular one and there weren't any filter on the accommodations. This explains the very large amount 
+of pages for each package. Each page contains 3 accommodationBookings.
+```               
+{
+
+    "id": 35,
+    "onBudgetQuote": {
+        "category": "ON_BUDGET",
+        "price": 27.19,
+        "pageCount": 37
+    },
+    "threeStarsQuote": {
+        "category": "THREE_STARS",
+        "price": 44.32,
+        "pageCount": 52
+    },
+    "fourStarsQuote": {
+        "category": "FOUR_STARS",
+        "price": 85,
+        "pageCount": 32
+    },
+    "fiveStarsQuote": {
+        "category": "FIVE_STARS",
+        "price": 104.31,
+        "pageCount": 12
+    }
+}
+```               
+               
+
 <a name="Authenticate"></a>
 ## Authenticate [/authenticate]
 
@@ -286,10 +686,19 @@ different authentication scheme we provide, you can refer to [this part](#Authen
 
 ### Itineraries Generation [/trip/multidestination/generate]
 <a name="Generation"></a>
-The propositions endpoint are the entry point of the trip automation process. They contains two steps.
+The propositions endpoints are the entry point of the trip automation process. They contain two steps.
 The first one consist in submitting the trip creation form. This is the step described below. And the
 second one will be about retrieving the generated multi-destination trips itineraries. This will be covered
 just after the generation endpoint.
+
+To simplify the user input form, we recommend making usage of default value. Here is how we dit this for example :
+![alt text](https://image.ibb.co/dRirqy/Screenshot_from_2018_05_31_11_09_00.png "Simplified form" )
+
+It is written in french, but as you can see, we only have **the departure place, the destination and the start date** of 
+the trip. We then have a **`More Parameters`** button to add more filters to the search. The **duration is defaulted to
+10 days** so that the user doesn't have to type in its return date, the number of destinations is **defaulted to 3**, the
+departure place is set directly using the end-user ip address geo location. Finally, the passengers are defaulted
+to **two adults**. This really simplify the form a lot and **make it easy to fill out** for the end user.
 
 ### Generate Itineraries Matching Your Request  [POST]
 
@@ -863,13 +1272,14 @@ the whole itineraries result set.
     }
 
 
-### Build Itinerary [/trip/multidestination/build/{itineraryId}{?withPackage}]
+### Build an Itinerary [/trip/multidestination/build/{itineraryId}{?withPackage}]
 
 This endpoint will allow you to **build a trip** out of a given **accommodation package type** and an **itinerary id**
 This means that while paths and journeys were built neither the accommodations nor the trip entity were built yet and 
 they need to be built in. The goal here is to **build the accommodations on top of the new trip entity** with the above 
 mentionned **package and itinerary**. 
 
+<a name="TripKey"></a>
 This endpoint will return the freshly generated trip id and key. When the trip is fully generated, we issue a key to 
 ensure that **it can only be modified by its owner**. Keys were thought to safeguard the trip pages as a password do. When
 used in our front-end application, they are stored in the local storage of the end-user browser so that if they refresh
@@ -882,6 +1292,12 @@ worked technically correctly.
 The `discountPercentage` field **doesn't represent any real world value**. It is just a hashed quantity based on the id 
 and the price of this trip that never change (except if the price changes). This can be used as a fake discount 
 percentage in front-end application or just bypassed.
+
+Please also note that you can build accommodations to the same itinerary **as many times as you wish** without causing
+any error. If done several times on an identical itinerary, you will notice that **the same trip entity** is sent back 
+each time, but **the trip accommodations** are updated to the new selected package requirements. The only case in which 
+it might end out with an exception is **when the itinerary is not available anymore** as it has a short lifespan (yet 2
+hours only).
 
 If the package isn’t defined for the given trip proposition, or if no accommodation package was previously retrieved, 
 (for example if you never used the `withAccommodationPackagesQuote` parameter when you retrieved the itinerary you are 
@@ -923,6 +1339,342 @@ package is not anymore live because the prices yield since they were proposed. I
     }
 
 
+### Get a Trip [/trip/{tripId}{?key}]
+
+Once you've built the trip, you want to retrieve it. This can be done easily through this `GET` endpoint. We require you
+to submit both the id of the trip and its key in order to ensure that the owner of the trip is querying the trip itself.
+ 
+The complete trip object returned will allow you to access to all datas concerning : the original request performed, 
+the complete itinerary, the flights used and the accommodations in the package. The flights contain at this step nearly
+no valuable information. This will change soon as we will use the itinerary building step to retrieve information about
+our choosen flight tickets right here.
+
+To understand correctly the trip object you will retrieve from this endpoint, we advise you take a look at our
+[detailed explanations](#Journey) about the `Journey` object.
+
++ Parameters
+    + id: 546 (number, required) - The id of the trip you want to retrieve
+    + key: `3tcIXKkZPircDSm2FNLp` (string, required) - The key to access the trip securely. ([Learn more](#TripKey).)
+    
+    
+### Get a Trip [GET]          
+               
++ Response 200 (application/json)
+```
+{
+    "status": "SENT",
+    "httpStatus": 200,
+    "tokenExpiration": "05/31/2018 09:53:28.1990+00:00",
+    "apiCallId": 9139,
+    "contents": {
+        "trip": {
+            "id": 549,
+            "key": "3tcIXKkZPircDSm2FNLp",
+            "journeys": [
+                {
+                    "id": 6945,
+                    "toPlace": {
+                        "id": 2372,
+                        "name": "Bangkok",
+                        "countryId": "TH",
+                        "countryName": "Thailand",
+                        "translatedName": "Bangkok",
+                        "translatedCountryName": "Thaïlande",
+                        "photographyHolder": {
+                            "id": 1316,
+                            "photographies": [
+                                {
+                                    "id": 500341,
+                                    "type": "LANDSCAPE",
+                                    "origin": "SELF_HOSTED",
+                                    "originalWidth": 960,
+                                    "originalHeight": 540,
+                                    "latitude": null,
+                                    "longitude": null,
+                                    "attribution": {
+                                        "id": 500341,
+                                        "sourceProvider": "Pixabay",
+                                        "sourceName": "Pixabay",
+                                        "url": "https://pixabay.com/en/https://pixabay.com/fr/grand-palace-wat-phra-kaew-bangkok-1822487/",
+                                        "license": "CC0 1.0 Universal (CC0 1.0)",
+                                        "authorUrl": "pixabay.com",
+                                        "author": "",
+                                        "title": "Https://pixabay.com/fr/grand Palace Wat Phra Kaew Bangkok",
+                                        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                                    },
+                                    "multisized": true,
+                                    "pathRelative": true,
+                                    "largePath": "uploads/images/large/mX3ufxb5yU.jpg",
+                                    "smallPath": "uploads/images/small/mX3ufxb5yU.jpg",
+                                    "mediumPath": "uploads/images/medium/mX3ufxb5yU.jpg",
+                                    "thumbnailPath": "uploads/images/thumbnail/mX3ufxb5yU.jpg"
+                                }
+                            ]
+                        }
+                    },
+                    "path": {
+                        "id": 8175,
+                        "fromDate": "06/08/2018 00:00",
+                        "toDate": "06/08/2018 00:00",
+                        "price": 1298,
+                        "type": "FLIGHT",
+                        "distanceTravelled": null,
+                        "quoteCreatedAt": "05/31/2018 08:52:46.0000+00:00",
+                        "cache": false,
+                        "quoteDatetime": "05/31/2018 08:52:46.0000+00:00",
+                        "companies": [],
+                        "durationInMinutes": null,
+                        "flightExtension": {
+                            "id": 9865,
+                            "fromAirport": {
+                                "id": 1185,
+                                "name": "Charles de Gaulle International Airport",
+                                "iata": "CDG",
+                                "translatedName": "Aéroport Charles de Gaulle International"
+                            },
+                            "toAirport": {
+                                "id": 2456,
+                                "name": "Suvarnabhumi Airport",
+                                "iata": "BKK",
+                                "translatedName": "Aéroport Suvarnabhumi"
+                            },
+                            "apiCompany": "SKYLAP_PRICE"
+                        },
+                        "transportationClass": "ECONOMY",
+                        "ticketType": "SKYLAP_MULTIDESTINATION_MASTER_TICKET",
+                        "bookingAgent": {
+                            "id": 30,
+                            "name": "Skylap",
+                            "rawLogoUrl": "https://www.skylap.co/assets/images/logo.png"
+                        },
+                        "bookingSession": {
+                            "id": 2015,
+                            "origin": "SKYLAP",
+                            "createdAt": "05/31/2018 08:52:46.0000+00:00",
+                            "agent": {
+                                "id": 30,
+                                "name": "Skylap",
+                                "rawLogoUrl": "https://www.skylap.co/assets/images/logo.png"
+                            },
+                            "price": 1298,
+                            "valid": true,
+                            "refreshable": false,
+                            "expiresAt": "05/31/2018 10:52:46.0000+00:00",
+                            "modifiable": false,
+                            "expired": false
+                        }
+                    },
+                    "accommodationBooking": {
+                        "id": 1247,
+                        "accommodation": {
+                            "id": 11556,
+                            "origin": "BOOKING",
+                            "name": "Metro Point Bangkok",
+                            "latitude": 13.76837,
+                            "longitude": 100.63203,
+                            "starRating": 7.1,
+                            "reviewsNumber": 29,
+                            "url": "https://www.booking.com/hotel/th/metro-point-bangkok.html",
+                            "description": "L'hôtel Metro Point, ayant ouvert ses portes en décembre 2008, est situé à seulement 20 minutes de route de l'aéroport international de Suvarnabhumi et permet d'accéder facilement aux principales destinations locales et touristiques.",
+                            "params": {
+                                "prefered": false,
+                                "importantInformation": "",
+                                "welcomeMessage": null,
+                                "facilities": [
+                                    "parking",
+                                    "Restaurant",
+                                    "Service d'étage",
+                                    // ...
+                                ]
+                            },
+                            "address": "666 Soi Ladprao 130, Ladprao Road, Klongjun, Ramkhamhaeng 81",
+                            "zip": "10240",
+                            "currency": "THB",
+                            "hotelClass": 4,
+                            "photographyHolder": {
+                                "id": 45583,
+                                "photographies": [
+                                    {
+                                        "id": 403000,
+                                        "type": "LANDSCAPE",
+                                        "origin": "BOOKING",
+                                        "originalWidth": 1024,
+                                        "originalHeight": 1024,
+                                        "latitude": 13.7684,
+                                        "longitude": 100.632,
+                                        "attribution": {
+                                            "id": 399602,
+                                            "sourceProvider": "booking.com",
+                                            "sourceName": "booking.com",
+                                            "url": null,
+                                            "license": null,
+                                            "authorUrl": "booking.com",
+                                            "author": "booking.com",
+                                            "title": "Metro Point Bangkok photography 1_300",
+                                            "licenseUrl": null
+                                        },
+                                        "multisized": false,
+                                        "pathRelative": false,
+                                        "path": "https://aff.bstatic.com/images/hotel/max1024x768/287/28719040.jpg"
+                                    },
+                                    // ...
+                                ]
+                            },
+                            "distanceToCityCenter": 13.683149
+                        },
+                        "price": 85,
+                        "quoteDateTime": "05/31/2018 10:53",
+                        "roomBookings": [
+                            {
+                                "id": 1319,
+                                "price": 75.35,
+                                "passengers": [
+                                    {
+                                        "id": 637,
+                                        "age": 19
+                                    }
+                                ]
+                            }
+                        ],
+                        "commonRoomBlock": {
+                            "id": 2267,
+                            "room": {
+                                "id": 2201,
+                                "roomSurfaceInSquareMeters": 28,
+                                "name": "Chambre Double ou Lits Jumeaux Supérieure - Non remboursable",
+                                "description": "Cette chambre double/lits jumeaux comprend 1 grand lit double ou 2 lits simples.",
+                                "photographyHolder": {
+                                    "id": 70792,
+                                    "photographies": [
+                                        {
+                                            "id": 604666,
+                                            "type": "LANDSCAPE",
+                                            "origin": "BOOKING",
+                                            "originalWidth": 1024,
+                                            "originalHeight": 1024,
+                                            "latitude": 13.7684,
+                                            "longitude": 100.632,
+                                            "attribution": {
+                                                "id": 604186,
+                                                "sourceProvider": null,
+                                                "sourceName": "booking.com",
+                                                "url": null,
+                                                "license": null,
+                                                "authorUrl": null,
+                                                "author": null,
+                                                "title": "1_1024",
+                                                "licenseUrl": null
+                                            },
+                                            "multisized": false,
+                                            "pathRelative": false,
+                                            "path": "https://q-xx.bstatic.com/images/hotel/max1024x768/122/122672945.jpg"
+                                        }
+                                    ]
+                                },
+                                "bedroomsCount": null,
+                                "bathroomsCount": null
+                            },
+                            "maxOccupancy": 2,
+                            "maxChildrenFree": 0,
+                            "maxChildrenFreeAge": 12,
+                            "mealPlan": "NONE",
+                            "breakfastIncluded": false,
+                            "refundable": false
+                        },
+                        "pageNumber": 0,
+                        "roomsNumber": 0,
+                        "deeplink": "https://www.booking.com/hotel/th/metro-point-bangkok.html?aid=1312052&checkin=2018-06-08&checkout=2018-06-11&room_1=A",
+                        "pricingExpired": false
+                    },
+                    "actualJourneyInd": 0,
+                    "allAccommodationsFetched": true,
+                    "lastAccommodationPage": 3,
+                    "accommodationPackagesQuote": {
+                        "id": 35,
+                        "onBudgetQuote": {
+                            "category": "ON_BUDGET",
+                            "price": 27.19,
+                            "pageCount": 37
+                        },
+                        "threeStarsQuote": {
+                            "category": "THREE_STARS",
+                            "price": 44.32,
+                            "pageCount": 52
+                        },
+                        "fourStarsQuote": {
+                            "category": "FOUR_STARS",
+                            "price": 85,
+                            "pageCount": 32
+                        },
+                        "fiveStarsQuote": {
+                            "category": "FIVE_STARS",
+                            "price": 104.31,
+                            "pageCount": 12
+                        }
+                    },
+                    "duration": 3,
+                    "fromDate": "06/08/2018",
+                    "price": 1383,
+                    "toDate": "06/11/2018",
+                    "alternativeAccommodationBookings": [
+                       // alternative accommodation bookings
+                    ]
+                },
+                //...
+            ],
+            "fromPlace": {
+                // another destination object
+            }, 
+            "toPlace": {
+                // and one other destination object
+            },
+            "createdAt": "05/31/2018 10:53",
+            "updatedAt": "05/31/2018 10:53",
+            "favorited": false,
+            "skyscannerFlightTarificationSearch": null,
+            "category": "FOUR_STARS",
+            "price": 1572.5599,
+            "duration": 10,
+            "passed": false,
+            "discountPercentage": 42
+        },
+        "request": {
+            "id": 493,
+            "customTag": null,
+            "fromDate": "06/08/2018",
+            "toDate": "06/18/2018",
+            "moreJourneys": false,
+            "passengers": [
+                {
+                    "id": 637,
+                    "age": 19
+                }
+            ],
+            "fromPlace": {
+                // and another one destination object
+            },
+            "toPlace": {
+                // finally the last one destination object
+            },
+            "createdAt": "05/31/2018",
+            "budget": {
+                "id": 1003,
+                "value": 300
+            },
+            "regenerated": false,
+            "flexibleDates": false,
+            "destinationsCount": 3,
+            "mustUseDestinations": [],
+            "region": "ASIA",
+            "requestTags": [],
+            "passengersCount": 1,
+            "tripDuration": 10,
+            "family": false
+        }
+    }
+}
+```
+
                
 ### Geo Structures [/geo/autocomplete{?query,geoTypes}]
 <a name="Geo"></a>
@@ -935,6 +1687,9 @@ There is no other Geo Endpoints but if you need more geo endpoints in order to m
 content to ours correctly, please feel free to send us a request, we would be delighted to develop 
 this feature for you. If you need more detailed information from this endpoint (like latitude and 
 longitude for example), feel free to contact us as well.
+
+We plan to soon add an endpoint to map an ip address to its closest city so that you can make use 
+of this information as a default departure date.
 
 <a name="Autocomplete"></a>   
 + Parameters
@@ -1028,6 +1783,10 @@ longitude for example), feel free to contact us as well.
  + `AIRPORT` - Airport Type
 
 ## Tag (enum[string])
+ + `CWB` - WELL_BEING : This will filter out hotels that doesn't have a spa, a pool, or any other well being space.
+ + `COB` - ON_BUDGET : Only 3 stars and `ON_BUDGET` accommodation packages. Dormitories will be enabled.
+ + `CMF` - COMFORT : Only 3, 4 and 5 stars accommodation packages.
+ + `CCC` - CITY_CENTER : Will show only the hotels in the city center.     
  + `CCUL` - CULTURE
  + `CHI` - HISTORIC
  + `CUN` - UNESCO
@@ -1056,11 +1815,7 @@ longitude for example), feel free to contact us as well.
  + `GSA` - SOUTHEAST_ASIA
  + `GEE` - EASTERN_EUROPE
  + `GCAR` - CARAIBES
- + `OFA` - FAMILY
- + `CWB` - WELL_BEING
- + `COB` - ON_BUDGET
- + `CMF` - COMFORT
- + `CCC` - CITY_CENTER            
+ + `OFA` - FAMILY      
  
  
 ## PackageCategory (enum[string])
@@ -1078,8 +1833,9 @@ longitude for example), feel free to contact us as well.
  **Required** - The end date of the trip.
 
 - tags: (array[enum[Tag]]) -
- **Optional** - The tags the itinerary must match. The 4 last tags describe accommodations and not the destinations
+ **Optional** - The tags the itinerary must match. The 4 first tags describe accommodations and not the destinations
  of the itineraries.
+    + Default: []
 
 - fromPlace: `DE1132` (string) -
  **Required** The starting place of the trip. This might be either an airport or a destination (All Airports of 
@@ -1094,11 +1850,14 @@ either an airport or a destination (All Airports of this city). The available ge
 **Required** The passengers of the trip. This soon will be replaced by a string similar to this one : `A,A,16,4`.
  There must be at least one adult in the passengers array.
 
-- region: ASIA (Region) - **Required** The region in which the trip should take place.
+- region: ASIA (Region) - 
+**Required** The region in which the trip should take place.
 
-- destinationsCount: `3` (number) - **Required** The exact number of destinations that shall appear in the itineraries.
+- destinationsCount: `3` (number) - 
+**Required** The exact number of destinations that shall appear in the itineraries. it must lie between 2 and 6 included.
 
-- flexibleDates: `false` (boolean) - **Optional** Wether the start/end date is flexible (+/- 1 day).
+- flexibleDates: `false` (boolean) - 
+**Optional** Wether the start/end date is flexible (+/- 1 day).
 
 - mustUseDestinations: DE308 (array[string]) - 
 **Optional** The ids of the destinations/airports the user wants to visit. The available geographical entities can be
