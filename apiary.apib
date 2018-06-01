@@ -617,6 +617,7 @@ Alternative Accommodations is a **paginated array** for which you always receive
 trip endpoint. There are dedicated endpoints to **see the other pages** of those alternative accommodations or to
 replace the choosen `accommodationBooking` by one of the `accommodationBooking` in this array.
 
+<a name="AccommodationPackagesQuote"></name>
 #### Accommodation Packages Quote
 
 
@@ -1360,194 +1361,143 @@ To understand correctly the trip object you will retrieve from this endpoint, we
 ### Get a Trip [GET]          
                
 + Response 200 (application/json)
-```
-{
-    "status": "SENT",
-    "httpStatus": 200,
-    "tokenExpiration": "05/31/2018 09:53:28.1990+00:00",
-    "apiCallId": 9139,
-    "contents": {
-        "trip": {
-            "id": 549,
-            "key": "3tcIXKkZPircDSm2FNLp",
-            "journeys": [
-                {
-                    "id": 6945,
-                    "toPlace": {
-                        "id": 2372,
-                        "name": "Bangkok",
-                        "countryId": "TH",
-                        "countryName": "Thailand",
-                        "translatedName": "Bangkok",
-                        "translatedCountryName": "Thaïlande",
-                        "photographyHolder": {
-                            "id": 1316,
-                            "photographies": [
-                                {
-                                    "id": 500341,
-                                    "type": "LANDSCAPE",
-                                    "origin": "SELF_HOSTED",
-                                    "originalWidth": 960,
-                                    "originalHeight": 540,
-                                    "latitude": null,
-                                    "longitude": null,
-                                    "attribution": {
+
+    {
+    
+        "status": "SENT",
+        "httpStatus": 200,
+        "tokenExpiration": "05/31/2018 09:53:28.1990+00:00",
+        "apiCallId": 9139,
+        "contents": {
+            "trip": {
+                "id": 549,
+                "key": "3tcIXKkZPircDSm2FNLp",
+                "journeys": [
+                    {
+                        "id": 6945,
+                        "toPlace": {
+                            "id": 2372,
+                            "name": "Bangkok",
+                            "countryId": "TH",
+                            "countryName": "Thailand",
+                            "translatedName": "Bangkok",
+                            "translatedCountryName": "Thaïlande",
+                            "photographyHolder": {
+                                "id": 1316,
+                                "photographies": [
+                                    {
                                         "id": 500341,
-                                        "sourceProvider": "Pixabay",
-                                        "sourceName": "Pixabay",
-                                        "url": "https://pixabay.com/en/https://pixabay.com/fr/grand-palace-wat-phra-kaew-bangkok-1822487/",
-                                        "license": "CC0 1.0 Universal (CC0 1.0)",
-                                        "authorUrl": "pixabay.com",
-                                        "author": "",
-                                        "title": "Https://pixabay.com/fr/grand Palace Wat Phra Kaew Bangkok",
-                                        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
-                                    },
-                                    "multisized": true,
-                                    "pathRelative": true,
-                                    "largePath": "uploads/images/large/mX3ufxb5yU.jpg",
-                                    "smallPath": "uploads/images/small/mX3ufxb5yU.jpg",
-                                    "mediumPath": "uploads/images/medium/mX3ufxb5yU.jpg",
-                                    "thumbnailPath": "uploads/images/thumbnail/mX3ufxb5yU.jpg"
-                                }
-                            ]
-                        }
-                    },
-                    "path": {
-                        "id": 8175,
-                        "fromDate": "06/08/2018 00:00",
-                        "toDate": "06/08/2018 00:00",
-                        "price": 1298,
-                        "type": "FLIGHT",
-                        "distanceTravelled": null,
-                        "quoteCreatedAt": "05/31/2018 08:52:46.0000+00:00",
-                        "cache": false,
-                        "quoteDatetime": "05/31/2018 08:52:46.0000+00:00",
-                        "companies": [],
-                        "durationInMinutes": null,
-                        "flightExtension": {
-                            "id": 9865,
-                            "fromAirport": {
-                                "id": 1185,
-                                "name": "Charles de Gaulle International Airport",
-                                "iata": "CDG",
-                                "translatedName": "Aéroport Charles de Gaulle International"
-                            },
-                            "toAirport": {
-                                "id": 2456,
-                                "name": "Suvarnabhumi Airport",
-                                "iata": "BKK",
-                                "translatedName": "Aéroport Suvarnabhumi"
-                            },
-                            "apiCompany": "SKYLAP_PRICE"
+                                        "type": "LANDSCAPE",
+                                        "origin": "SELF_HOSTED",
+                                        "originalWidth": 960,
+                                        "originalHeight": 540,
+                                        "latitude": null,
+                                        "longitude": null,
+                                        "attribution": {
+                                            "id": 500341,
+                                            "sourceProvider": "Pixabay",
+                                            "sourceName": "Pixabay",
+                                            "url": "https://pixabay.com/en/https://pixabay.com/fr/grand-palace-wat-phra-kaew-bangkok-1822487/",
+                                            "license": "CC0 1.0 Universal (CC0 1.0)",
+                                            "authorUrl": "pixabay.com",
+                                            "author": "",
+                                            "title": "Https://pixabay.com/fr/grand Palace Wat Phra Kaew Bangkok",
+                                            "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/deed.en"
+                                        },
+                                        "multisized": true,
+                                        "pathRelative": true,
+                                        "largePath": "uploads/images/large/mX3ufxb5yU.jpg",
+                                        "smallPath": "uploads/images/small/mX3ufxb5yU.jpg",
+                                        "mediumPath": "uploads/images/medium/mX3ufxb5yU.jpg",
+                                        "thumbnailPath": "uploads/images/thumbnail/mX3ufxb5yU.jpg"
+                                    }
+                                ]
+                            }
                         },
-                        "transportationClass": "ECONOMY",
-                        "ticketType": "SKYLAP_MULTIDESTINATION_MASTER_TICKET",
-                        "bookingAgent": {
-                            "id": 30,
-                            "name": "Skylap",
-                            "rawLogoUrl": "https://www.skylap.co/assets/images/logo.png"
-                        },
-                        "bookingSession": {
-                            "id": 2015,
-                            "origin": "SKYLAP",
-                            "createdAt": "05/31/2018 08:52:46.0000+00:00",
-                            "agent": {
+                        "path": {
+                            "id": 8175,
+                            "fromDate": "06/08/2018 00:00",
+                            "toDate": "06/08/2018 00:00",
+                            "price": 1298,
+                            "type": "FLIGHT",
+                            "distanceTravelled": null,
+                            "quoteCreatedAt": "05/31/2018 08:52:46.0000+00:00",
+                            "cache": false,
+                            "quoteDatetime": "05/31/2018 08:52:46.0000+00:00",
+                            "companies": [],
+                            "durationInMinutes": null,
+                            "flightExtension": {
+                                "id": 9865,
+                                "fromAirport": {
+                                    "id": 1185,
+                                    "name": "Charles de Gaulle International Airport",
+                                    "iata": "CDG",
+                                    "translatedName": "Aéroport Charles de Gaulle International"
+                                },
+                                "toAirport": {
+                                    "id": 2456,
+                                    "name": "Suvarnabhumi Airport",
+                                    "iata": "BKK",
+                                    "translatedName": "Aéroport Suvarnabhumi"
+                                },
+                                "apiCompany": "SKYLAP_PRICE"
+                            },
+                            "transportationClass": "ECONOMY",
+                            "ticketType": "SKYLAP_MULTIDESTINATION_MASTER_TICKET",
+                            "bookingAgent": {
                                 "id": 30,
                                 "name": "Skylap",
                                 "rawLogoUrl": "https://www.skylap.co/assets/images/logo.png"
                             },
-                            "price": 1298,
-                            "valid": true,
-                            "refreshable": false,
-                            "expiresAt": "05/31/2018 10:52:46.0000+00:00",
-                            "modifiable": false,
-                            "expired": false
-                        }
-                    },
-                    "accommodationBooking": {
-                        "id": 1247,
-                        "accommodation": {
-                            "id": 11556,
-                            "origin": "BOOKING",
-                            "name": "Metro Point Bangkok",
-                            "latitude": 13.76837,
-                            "longitude": 100.63203,
-                            "starRating": 7.1,
-                            "reviewsNumber": 29,
-                            "url": "https://www.booking.com/hotel/th/metro-point-bangkok.html",
-                            "description": "L'hôtel Metro Point, ayant ouvert ses portes en décembre 2008, est situé à seulement 20 minutes de route de l'aéroport international de Suvarnabhumi et permet d'accéder facilement aux principales destinations locales et touristiques.",
-                            "params": {
-                                "prefered": false,
-                                "importantInformation": "",
-                                "welcomeMessage": null,
-                                "facilities": [
-                                    "parking",
-                                    "Restaurant",
-                                    "Service d'étage",
-                                    // ...
-                                ]
-                            },
-                            "address": "666 Soi Ladprao 130, Ladprao Road, Klongjun, Ramkhamhaeng 81",
-                            "zip": "10240",
-                            "currency": "THB",
-                            "hotelClass": 4,
-                            "photographyHolder": {
-                                "id": 45583,
-                                "photographies": [
-                                    {
-                                        "id": 403000,
-                                        "type": "LANDSCAPE",
-                                        "origin": "BOOKING",
-                                        "originalWidth": 1024,
-                                        "originalHeight": 1024,
-                                        "latitude": 13.7684,
-                                        "longitude": 100.632,
-                                        "attribution": {
-                                            "id": 399602,
-                                            "sourceProvider": "booking.com",
-                                            "sourceName": "booking.com",
-                                            "url": null,
-                                            "license": null,
-                                            "authorUrl": "booking.com",
-                                            "author": "booking.com",
-                                            "title": "Metro Point Bangkok photography 1_300",
-                                            "licenseUrl": null
-                                        },
-                                        "multisized": false,
-                                        "pathRelative": false,
-                                        "path": "https://aff.bstatic.com/images/hotel/max1024x768/287/28719040.jpg"
-                                    },
-                                    // ...
-                                ]
-                            },
-                            "distanceToCityCenter": 13.683149
-                        },
-                        "price": 85,
-                        "quoteDateTime": "05/31/2018 10:53",
-                        "roomBookings": [
-                            {
-                                "id": 1319,
-                                "price": 75.35,
-                                "passengers": [
-                                    {
-                                        "id": 637,
-                                        "age": 19
-                                    }
-                                ]
+                            "bookingSession": {
+                                "id": 2015,
+                                "origin": "SKYLAP",
+                                "createdAt": "05/31/2018 08:52:46.0000+00:00",
+                                "agent": {
+                                    "id": 30,
+                                    "name": "Skylap",
+                                    "rawLogoUrl": "https://www.skylap.co/assets/images/logo.png"
+                                },
+                                "price": 1298,
+                                "valid": true,
+                                "refreshable": false,
+                                "expiresAt": "05/31/2018 10:52:46.0000+00:00",
+                                "modifiable": false,
+                                "expired": false
                             }
-                        ],
-                        "commonRoomBlock": {
-                            "id": 2267,
-                            "room": {
-                                "id": 2201,
-                                "roomSurfaceInSquareMeters": 28,
-                                "name": "Chambre Double ou Lits Jumeaux Supérieure - Non remboursable",
-                                "description": "Cette chambre double/lits jumeaux comprend 1 grand lit double ou 2 lits simples.",
+                        },
+                        "accommodationBooking": {
+                            "id": 1247,
+                            "accommodation": {
+                                "id": 11556,
+                                "origin": "BOOKING",
+                                "name": "Metro Point Bangkok",
+                                "latitude": 13.76837,
+                                "longitude": 100.63203,
+                                "starRating": 7.1,
+                                "reviewsNumber": 29,
+                                "url": "https://www.booking.com/hotel/th/metro-point-bangkok.html",
+                                "description": "L'hôtel Metro Point, ayant ouvert ses portes en décembre 2008, est situé à seulement 20 minutes de route de l'aéroport international de Suvarnabhumi et permet d'accéder facilement aux principales destinations locales et touristiques.",
+                                "params": {
+                                    "prefered": false,
+                                    "importantInformation": "",
+                                    "welcomeMessage": null,
+                                    "facilities": [
+                                        "parking",
+                                        "Restaurant",
+                                        "Service d'étage",
+                                        // ...
+                                    ]
+                                },
+                                "address": "666 Soi Ladprao 130, Ladprao Road, Klongjun, Ramkhamhaeng 81",
+                                "zip": "10240",
+                                "currency": "THB",
+                                "hotelClass": 4,
                                 "photographyHolder": {
-                                    "id": 70792,
+                                    "id": 45583,
                                     "photographies": [
                                         {
-                                            "id": 604666,
+                                            "id": 403000,
                                             "type": "LANDSCAPE",
                                             "origin": "BOOKING",
                                             "originalWidth": 1024,
@@ -1555,125 +1505,388 @@ To understand correctly the trip object you will retrieve from this endpoint, we
                                             "latitude": 13.7684,
                                             "longitude": 100.632,
                                             "attribution": {
-                                                "id": 604186,
-                                                "sourceProvider": null,
+                                                "id": 399602,
+                                                "sourceProvider": "booking.com",
                                                 "sourceName": "booking.com",
                                                 "url": null,
                                                 "license": null,
-                                                "authorUrl": null,
-                                                "author": null,
-                                                "title": "1_1024",
+                                                "authorUrl": "booking.com",
+                                                "author": "booking.com",
+                                                "title": "Metro Point Bangkok photography 1_300",
                                                 "licenseUrl": null
                                             },
                                             "multisized": false,
                                             "pathRelative": false,
-                                            "path": "https://q-xx.bstatic.com/images/hotel/max1024x768/122/122672945.jpg"
-                                        }
+                                            "path": "https://aff.bstatic.com/images/hotel/max1024x768/287/28719040.jpg"
+                                        },
+                                        // ...
                                     ]
                                 },
-                                "bedroomsCount": null,
-                                "bathroomsCount": null
+                                "distanceToCityCenter": 13.683149
                             },
-                            "maxOccupancy": 2,
-                            "maxChildrenFree": 0,
-                            "maxChildrenFreeAge": 12,
-                            "mealPlan": "NONE",
-                            "breakfastIncluded": false,
-                            "refundable": false
-                        },
-                        "pageNumber": 0,
-                        "roomsNumber": 0,
-                        "deeplink": "https://www.booking.com/hotel/th/metro-point-bangkok.html?aid=1312052&checkin=2018-06-08&checkout=2018-06-11&room_1=A",
-                        "pricingExpired": false
-                    },
-                    "actualJourneyInd": 0,
-                    "allAccommodationsFetched": true,
-                    "lastAccommodationPage": 3,
-                    "accommodationPackagesQuote": {
-                        "id": 35,
-                        "onBudgetQuote": {
-                            "category": "ON_BUDGET",
-                            "price": 27.19,
-                            "pageCount": 37
-                        },
-                        "threeStarsQuote": {
-                            "category": "THREE_STARS",
-                            "price": 44.32,
-                            "pageCount": 52
-                        },
-                        "fourStarsQuote": {
-                            "category": "FOUR_STARS",
                             "price": 85,
-                            "pageCount": 32
+                            "quoteDateTime": "05/31/2018 10:53",
+                            "roomBookings": [
+                                {
+                                    "id": 1319,
+                                    "price": 75.35,
+                                    "passengers": [
+                                        {
+                                            "id": 637,
+                                            "age": 19
+                                        }
+                                    ]
+                                }
+                            ],
+                            "commonRoomBlock": {
+                                "id": 2267,
+                                "room": {
+                                    "id": 2201,
+                                    "roomSurfaceInSquareMeters": 28,
+                                    "name": "Chambre Double ou Lits Jumeaux Supérieure - Non remboursable",
+                                    "description": "Cette chambre double/lits jumeaux comprend 1 grand lit double ou 2 lits simples.",
+                                    "photographyHolder": {
+                                        "id": 70792,
+                                        "photographies": [
+                                            {
+                                                "id": 604666,
+                                                "type": "LANDSCAPE",
+                                                "origin": "BOOKING",
+                                                "originalWidth": 1024,
+                                                "originalHeight": 1024,
+                                                "latitude": 13.7684,
+                                                "longitude": 100.632,
+                                                "attribution": {
+                                                    "id": 604186,
+                                                    "sourceProvider": null,
+                                                    "sourceName": "booking.com",
+                                                    "url": null,
+                                                    "license": null,
+                                                    "authorUrl": null,
+                                                    "author": null,
+                                                    "title": "1_1024",
+                                                    "licenseUrl": null
+                                                },
+                                                "multisized": false,
+                                                "pathRelative": false,
+                                                "path": "https://q-xx.bstatic.com/images/hotel/max1024x768/122/122672945.jpg"
+                                            }
+                                        ]
+                                    },
+                                    "bedroomsCount": null,
+                                    "bathroomsCount": null
+                                },
+                                "maxOccupancy": 2,
+                                "maxChildrenFree": 0,
+                                "maxChildrenFreeAge": 12,
+                                "mealPlan": "NONE",
+                                "breakfastIncluded": false,
+                                "refundable": false
+                            },
+                            "pageNumber": 0,
+                            "roomsNumber": 0,
+                            "deeplink": "https://www.booking.com/hotel/th/metro-point-bangkok.html?aid=1312052&checkin=2018-06-08&checkout=2018-06-11&room_1=A",
+                            "pricingExpired": false
                         },
-                        "fiveStarsQuote": {
-                            "category": "FIVE_STARS",
-                            "price": 104.31,
-                            "pageCount": 12
-                        }
+                        "actualJourneyInd": 0,
+                        "allAccommodationsFetched": true,
+                        "lastAccommodationPage": 3,
+                        "accommodationPackagesQuote": {
+                            "id": 35,
+                            "onBudgetQuote": {
+                                "category": "ON_BUDGET",
+                                "price": 27.19,
+                                "pageCount": 37
+                            },
+                            "threeStarsQuote": {
+                                "category": "THREE_STARS",
+                                "price": 44.32,
+                                "pageCount": 52
+                            },
+                            "fourStarsQuote": {
+                                "category": "FOUR_STARS",
+                                "price": 85,
+                                "pageCount": 32
+                            },
+                            "fiveStarsQuote": {
+                                "category": "FIVE_STARS",
+                                "price": 104.31,
+                                "pageCount": 12
+                            }
+                        },
+                        "duration": 3,
+                        "fromDate": "06/08/2018",
+                        "price": 1383,
+                        "toDate": "06/11/2018",
+                        "alternativeAccommodationBookings": [
+                           // alternative accommodation bookings
+                        ]
                     },
-                    "duration": 3,
-                    "fromDate": "06/08/2018",
-                    "price": 1383,
-                    "toDate": "06/11/2018",
-                    "alternativeAccommodationBookings": [
-                       // alternative accommodation bookings
-                    ]
+                    //...
+                ],
+                "fromPlace": {
+                    // another destination object
+                }, 
+                "toPlace": {
+                    // and one other destination object
                 },
-                //...
-            ],
-            "fromPlace": {
-                // another destination object
-            }, 
-            "toPlace": {
-                // and one other destination object
+                "createdAt": "05/31/2018 10:53",
+                "updatedAt": "05/31/2018 10:53",
+                "favorited": false,
+                "skyscannerFlightTarificationSearch": null,
+                "category": "FOUR_STARS",
+                "price": 1572.5599,
+                "duration": 10,
+                "passed": false,
+                "discountPercentage": 42
             },
-            "createdAt": "05/31/2018 10:53",
-            "updatedAt": "05/31/2018 10:53",
-            "favorited": false,
-            "skyscannerFlightTarificationSearch": null,
-            "category": "FOUR_STARS",
-            "price": 1572.5599,
-            "duration": 10,
-            "passed": false,
-            "discountPercentage": 42
-        },
-        "request": {
-            "id": 493,
-            "customTag": null,
-            "fromDate": "06/08/2018",
-            "toDate": "06/18/2018",
-            "moreJourneys": false,
-            "passengers": [
-                {
-                    "id": 637,
-                    "age": 19
-                }
-            ],
-            "fromPlace": {
-                // and another one destination object
-            },
-            "toPlace": {
-                // finally the last one destination object
-            },
-            "createdAt": "05/31/2018",
-            "budget": {
-                "id": 1003,
-                "value": 300
-            },
-            "regenerated": false,
-            "flexibleDates": false,
-            "destinationsCount": 3,
-            "mustUseDestinations": [],
-            "region": "ASIA",
-            "requestTags": [],
-            "passengersCount": 1,
-            "tripDuration": 10,
-            "family": false
+            "request": {
+                "id": 493,
+                "customTag": null,
+                "fromDate": "06/08/2018",
+                "toDate": "06/18/2018",
+                "moreJourneys": false,
+                "passengers": [
+                    {
+                        "id": 637,
+                        "age": 19
+                    }
+                ],
+                "fromPlace": {
+                    // and another one destination object
+                },
+                "toPlace": {
+                    // finally the last one destination object
+                },
+                "createdAt": "05/31/2018",
+                "budget": {
+                    "id": 1003,
+                    "value": 300
+                },
+                "regenerated": false,
+                "flexibleDates": false,
+                "destinationsCount": 3,
+                "mustUseDestinations": [],
+                "region": "ASIA",
+                "requestTags": [],
+                "passengersCount": 1,
+                "tripDuration": 10,
+                "family": false
+            }
         }
     }
-}
-```
+    
+    
+### Accommodations [/trip/multidestination/accommodation/{journeyId}{?key,withPackage,page,choosenAccommodationBookingId}]
+
+For each journey of our built trip, we provide two main endpoints to **edit journeys** choices for more flexibility.
+The first one will let you **poll more hotel results** for each journey, and the second one will let you **edit the 
+selected accommodation booking** for a given journey.
+
++ Parameters
+    + journeyId: 6945 (number, required) - The id of the journey targeted.
+    + key: `3tcIXKkZPircDSm2FNLp` (string, required) - The key to access the trip securely. ([Learn more](#TripKey).)
+ 
+### Fetch Alternative Accommodation Booking Page [GET] 
+
+We provide with each journey ([See Journey Object Description](#Journey)) a list of alternative accommodation 
+bookings. This list contains hotels in the same `PackageCategory` as the trip's global one. It is possible to **retrieve
+the next page** (next 3 accommodation bookings) and all following pages using this endpoint, but also to **query hotels
+in different packages**, typically to propose valuable upsale to the end-user (proposing one 5* hotel in a 4* package).
+
+Each package availability and total page count is displayed in the accommodation packages quote object of the journey
+entity ([See Accommodation Packages Quote Object Description](#AccommodationPackagesQuote)). They **should be checked**
+before performing any request to this endpoint. 
+
+Also there is a **distinct pagination** for **each package and journey**. This means that the page 0 of `FOUR_STARS` 
+hotels in journey x won't have anything in common with page 0 of `FIVE_STARS` hotels in journey x. Pages **must be 
+retrieved in the correct order**, page 2 cannot be retrieved before retrieving page 1. 
+
+The results displayed in `alternativeAccommodationBookings` when using `GET` trip endpoint are the ones contained in 
+the page 0 of the corresponding package. Polling the 0th page of the same package as the trip's default one is 
+**useless**.
+
+
++ Parameters
+    + withPackage: FOUR_STARS (enum[PackageCategory], required) - The package to fetch accommodations in.
+    + page: 1 (number, required) - The page you want to retrieve.
+ 
+       
++ Response 200 (application/json)
+
+    {
+        "status": "SENT",
+        "httpStatus": 200,
+        "tokenExpiration": "06/01/2018 01:54:35.0290+00:00",
+        "apiCallId": 9169,
+        "contents": {
+            "accommodationBookings": [
+                {
+                    "id": 1248,
+                    "accommodation": {
+                        "id": 16760,
+                        "origin": "BOOKING",
+                        "name": "Livotel Hotel Hua Mak Bangkok",
+                        "latitude": 13.75329,
+                        "longitude": 100.63597,
+                        "starRating": 8.1,
+                        "reviewsNumber": 203,
+                        "url": "https://www.booking.com/hotel/th/livotel-hua-mak.html",
+                        "description": "Situé à Bangkok, à 6 km du Central Festiva..", // longer description
+                        "params": {
+                            "prefered": false,
+                            "importantInformation": "",
+                            "welcomeMessage": null,
+                            "facilities": [
+                                "parking",
+                                "Restaurant",
+                                "Service d'étage",
+                                // some more facilities
+                            ]
+                        },
+                        "address": "33 Ramkhamhaeng 32, Hua Mak, Bang Kapi, Bangkok",
+                        "zip": "10230",
+                        "currency": "THB",
+                        "hotelClass": 4,
+                        "photographyHolder": {
+                            "id": 70813,
+                            "photographies": [
+                                {
+                                    "id": 604717,
+                                    "type": "LANDSCAPE",
+                                    "origin": "BOOKING",
+                                    "originalWidth": 1024,
+                                    "originalHeight": 1024,
+                                    "latitude": 13.7533,
+                                    "longitude": 100.636,
+                                    "attribution": {
+                                        "id": 604236,
+                                        "sourceProvider": null,
+                                        "sourceName": "booking.com",
+                                        "url": null,
+                                        "license": null,
+                                        "authorUrl": null,
+                                        "author": null,
+                                        "title": "1_1024",
+                                        "licenseUrl": null
+                                    },
+                                    "multisized": false,
+                                    "pathRelative": false,
+                                    "path": "https://q-xx.bstatic.com/images/hotel/max1024x768/106/106697468.jpg"
+                                }
+                            ]
+                        },
+                        "distanceToCityCenter": 14.040813
+                    },
+                    "price": 85,
+                    "quoteDateTime": "05/31/2018 10:53",
+                    "roomBookings": [
+                        {
+                            "id": 1320,
+                            "price": 69.63,
+                            "passengers": [
+                                {
+                                    "id": 637,
+                                    "age": 19
+                                }
+                            ]
+                        }
+                    ],
+                    "commonRoomBlock": {
+                        "id": 2471,
+                        "room": {
+                            "id": 2401,
+                            "roomSurfaceInSquareMeters": 27,
+                            "name": "Chambre Double Deluxe - Non remboursable",
+                            "description": "Cette chambre double est dotée d'un balcon, d'une bouilloire électrique et d'un coin repas.",
+                            "photographyHolder": {
+                                "id": 71113,
+                                "photographies": [
+                                    {
+                                        "id": 606275,
+                                        "type": "LANDSCAPE",
+                                        "origin": "BOOKING",
+                                        "originalWidth": 1024,
+                                        "originalHeight": 1024,
+                                        "latitude": 13.7533,
+                                        "longitude": 100.636,
+                                        "attribution": {
+                                            "id": 605786,
+                                            "sourceProvider": null,
+                                            "sourceName": "booking.com",
+                                            "url": null,
+                                            "license": null,
+                                            "authorUrl": null,
+                                            "author": null,
+                                            "title": "1_1024",
+                                            "licenseUrl": null
+                                        },
+                                        "multisized": false,
+                                        "pathRelative": false,
+                                        "path": "https://q-xx.bstatic.com/images/hotel/max1024x768/111/111887699.jpg"
+                                    }
+                                ]
+                            },
+                            "bedroomsCount": null,
+                            "bathroomsCount": null
+                        },
+                        "maxOccupancy": 2,
+                        "maxChildrenFree": 0,
+                        "maxChildrenFreeAge": 12,
+                        "mealPlan": "NONE",
+                        "breakfastIncluded": true,
+                        "refundable": false
+                    },
+                    "pageNumber": 1,
+                    "bookingSession": null,
+                    "roomsNumber": 0,
+                    "deeplink": "https://www.booking.com/hotel/th/livotel-hua-mak.html?aid=1312052&checkin=2018-06-08&checkout=2018-06-11&room_1=A",
+                    "pricingExpired": true
+                }
+            ]
+        }
+    } 
+ 
+### Choose an Alternative Accommodation Booking Page [PUT] 
+
+Using this method you will be able to **replace the choosen accommodation booking** of a journey (`accommodationBooking` 
+field) by another one **picked by the end-user**. This other accommodation booking might be **any of those we proposed 
+for this journey** either by sending them directly with the trip object or when fetching the other accommodations pages.
+
+You can't choose an accommodation booking that is already the one choosen for this journey.
+
++ Parameters
+    + choosenAccommodationBookingId: 1256 (number, required) -
+     The id of the choosen accommodation booking that should replace the old one.           
+ 
+       
++ Response 200 (application/json)
+    
+    {
+        "status": "SENT",
+        "httpStatus": 200,
+        "tokenExpiration": "06/01/2018 01:55:26.1540+00:00",
+        "apiCallId": 9170,
+        "contents": {
+            "step": {
+                "id": 1382,
+                "createdAt": "06/01/2018 02:55",
+                "stepDefinition": "ACCOMMODATION_CHOOSEN"
+            }
+        }
+    }    
+
+
+
+### Booking [/trip/multidestination/book]
+
+This part of the documentation is not ready as of today. This soon will be implemented.
+
+### Get Booking Tokens [GET]
+
++ Response 200 (application/json)
+
+    // Documentation not yet implemented  
 
                
 ### Geo Structures [/geo/autocomplete{?query,geoTypes}]
@@ -1698,6 +1911,9 @@ of this information as a default departure date.
      can be DESTINATION and/or AIRPORT.
              
 ### Autocomplete [GET]
+
+
+
         
 + Response 200 (application/json)
 
