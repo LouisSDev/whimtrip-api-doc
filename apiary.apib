@@ -618,6 +618,7 @@ trip endpoint. There are dedicated endpoints to **see the other pages** of those
 replace the choosen `accommodationBooking` by one of the `accommodationBooking` in this array.
 
 <a name="AccommodationPackagesQuote"></name>
+
 #### Accommodation Packages Quote
 
 
@@ -765,7 +766,7 @@ this feature.
 ### Retrieve Generated Itineraries [GET]
     
 + Response 200 (application/json)
-    
+```  
     {
         "status": "SENT",
         "httpStatus": 200,
@@ -1058,6 +1059,7 @@ this feature.
             }
         }
     }    
+```
  
 ### Retrieve an Itinerary [/trip/multidestination/itinerary/{itineraryId}] 
 <a name="GetItinerary"></a>
@@ -1361,7 +1363,7 @@ To understand correctly the trip object you will retrieve from this endpoint, we
 ### Get a Trip [GET]          
                
 + Response 200 (application/json)
-
+```
     {
     
         "status": "SENT",
@@ -1675,7 +1677,7 @@ To understand correctly the trip object you will retrieve from this endpoint, we
             }
         }
     }
-    
+```    
     
 ### Accommodations [/trip/multidestination/accommodation/{journeyId}{?key,withPackage,page,choosenAccommodationBookingId}]
 
@@ -1713,7 +1715,7 @@ the page 0 of the corresponding package. Polling the 0th page of the same packag
  
        
 + Response 200 (application/json)
-
+```
     {
         "status": "SENT",
         "httpStatus": 200,
@@ -1846,6 +1848,7 @@ the page 0 of the corresponding package. Polling the 0th page of the same packag
             ]
         }
     } 
+``` 
  
 ### Choose an Alternative Accommodation Booking Page [PUT] 
 
